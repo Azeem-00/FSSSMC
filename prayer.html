@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prayer Times Near You</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+background: #0f172a;
+color: #e5e7eb;
+margin: 0;
+padding: 0;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+}
+
+
+.card {
+background: #020617;
+padding: 24px;
+border-radius: 16px;
+width: 100%;
+max-width: 420px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+
+h1 {
+text-align: center;
+margin-bottom: 8px;
+}
+
+
+.location {
+text-align: center;
+font-size: 0.9rem;
+opacity: 0.8;
+margin-bottom: 16px;
+}
+
+
+ul {
+list-style: none;
+padding: 0;
+margin: 0;
+}
+
+
+li {
+display: flex;
+justify-content: space-between;
+padding: 10px 0;
+border-bottom: 1px solid #1e293b;
+}
+
+
+li:last-child {
+border-bottom: none;
+}
+
+
+.error {
+text-align: center;
+color: #f87171;
+margin-top: 12px;
+}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>🕌 Prayer Times</h1>
+<div class="location" id="location">Detecting your location…</div>
+<ul id="times"></ul>
+<div class="error" id="error"></div>
+</div>
+
+
+<script>
+const locationEl = document.getElementById('location');
+const timesEl = document.getElementById('times');
+const errorEl = document.getElementById('error');
+
+
+function showTimes(timings) {
+const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+timesEl.innerHTML = '';
+
+
+prayers.forEach(prayer => {
+const li = document.createElement('li');
+li.innerHTML = `<span>${prayer}</span><strong>${timings[prayer]}</strong>`;
