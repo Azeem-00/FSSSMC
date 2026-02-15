@@ -1,94 +1,97 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Prayer Times Near You</title>
-<style>
-body {
-font-family: Arial, sans-serif;
-background: #0f172a;
-color: #e5e7eb;
-margin: 0;
-padding: 0;
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <title>FSSMC Mosque - Prayer Times</title>
+    <link rel="stylesheet" href="/CSS/prayer.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="logo">
+          <img src="IMAGE/FSSMC ICON.jpeg" alt="FSSMC Mosque Logo" />
+          <span>FSSSMC Mosque</span>
+        </div>
+        <input type="checkbox" id="menu-toggle" />
+        <label for="menu-toggle" class="menu-icon">
+          <span></span><span></span><span></span>
+        </label>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a class="active" href="prayer.html">Prayer Times</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="calendar.html">Calendar</a></li>
+            <li><a href="quran.html">Quran</a></li>
+            <li><a class="nav-btn" href="donate.html">Donate</a></li>
+            <li><a class="nav-btn" href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <div class="container">
+        <h1>Prayer Times</h1>
+
+        <div id="location">Detecting location...</div>
+
+        <div id="countdown">Loading...</div>
+
+        <div class="grid">
+          <div class="card" id="Fajr">
+            <h2>Fajr</h2>
+            <p class="adhan" id="adhanFajr">--</p>
+            <p class="solat" id="solatFajr">--</p>
+          </div>
+
+          <div class="card" id="Dhuhr">
+            <h2>Dhuhr</h2>
+            <p class="adhan" id="adhanDhuhr">--</p>
+            <p class="solat" id="solatDhuhr">--</p>
+          </div>
+
+          <div class="card" id="Asr">
+            <h2>Asr</h2>
+            <p class="adhan" id="adhanAsr">--</p>
+            <p class="solat" id="solatAsr">--</p>
+          </div>
+
+          <div class="card" id="Maghrib">
+            <h2>Maghrib</h2>
+            <p class="adhan" id="adhanMaghrib">--</p>
+            <p class="solat" id="solatMaghrib">--</p>
+          </div>
+
+          <div class="card" id="Isha">
+            <h2>Isha</h2>
+            <p class="adhan" id="adhanIsha">--</p>
+            <p class="solat" id="solatIsha">--</p>
+          </div>
+        </div>
+
+        <!-- QIBLA COMPASS -->
+        <div class="qibla-container">
+          <div class="qibla-title">Qibla Direction</div>
+          <canvas id="compass" width="200" height="200"></canvas>
+          <div class="qibla-label" id="qiblaText">Finding direction...</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- SCRIPTS -->
+    <script src="/JS/prayer.js"></script>
+    <script src="/JS/qibla.js"></script>
+    <script>
+     if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/JS/service-worker.js");
 }
-
-
-.card {
-background: #020617;
-padding: 24px;
-border-radius: 16px;
-width: 100%;
-max-width: 420px;
-box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
-
-
-h1 {
-text-align: center;
-margin-bottom: 8px;
-}
-
-
-.location {
-text-align: center;
-font-size: 0.9rem;
-opacity: 0.8;
-margin-bottom: 16px;
-}
-
-
-ul {
-list-style: none;
-padding: 0;
-margin: 0;
-}
-
-
-li {
-display: flex;
-justify-content: space-between;
-padding: 10px 0;
-border-bottom: 1px solid #1e293b;
-}
-
-
-li:last-child {
-border-bottom: none;
-}
-
-
-.error {
-text-align: center;
-color: #f87171;
-margin-top: 12px;
-}
-</style>
-</head>
-<body>
-<div class="card">
-<h1>🕌 Prayer Times</h1>
-<div class="location" id="location">Detecting your location…</div>
-<ul id="times"></ul>
-<div class="error" id="error"></div>
-</div>
-
-
-<script>
-const locationEl = document.getElementById('location');
-const timesEl = document.getElementById('times');
-const errorEl = document.getElementById('error');
-
-
-function showTimes(timings) {
-const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-timesEl.innerHTML = '';
-
-
-prayers.forEach(prayer => {
-const li = document.createElement('li');
-li.innerHTML = `<span>${prayer}</span><strong>${timings[prayer]}</strong>`;
+</script>
+    </script>
+  </body>
+</html>

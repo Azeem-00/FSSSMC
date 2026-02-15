@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FSSSMC Mosque</title>
     <link rel="stylesheet" href="CSS/home.css" />
+    <link rel="manifest" href="manifest.json" />
   </head>
   <body>
     <header class="site-header">
@@ -49,5 +50,10 @@
     <footer class="site-footer">
       <p>© 2026 FSSSMC Mosque. All Rights Reserved.</p>
     </footer>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/JS/service-worker.js");
+      }
+    </script>
   </body>
 </html>

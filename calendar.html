@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FSSMC Mosque - Islamic Calendar</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f6f8f9;
+        margin: 0;
+        padding: 0;
+      }
+      .calendar-container {
+        max-width: 900px;
+        margin: 120px auto;
+        padding: 1.5rem;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+      .calendar-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .calendar-controls button {
+        padding: 0.4rem 0.8rem;
+        background: #3cb371;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      #calendar {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+      .month {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+      }
+      .month-title {
+        grid-column: span 7;
+        font-weight: 700;
+        text-align: center;
+        margin-top: 15px;
+        margin-bottom: 5px;
+      }
+      .weekday {
+        font-weight: 600;
+        text-align: center;
+      }
+      .hijri-day {
+        padding: 8px;
+        background: #f0f6f5;
+        border-radius: 6px;
+        text-align: center;
+      }
+      .hijri-day.today {
+        background: #3cb371;
+        color: white;
+        font-weight: 700;
+      }
+      @media (max-width: 768px) {
+        .hijri-day {
+          font-size: 0.8rem;
+          padding: 6px;
+        }
+        .month-title {
+          font-size: 1rem;
+        }
+        .calendar-controls button {
+          padding: 0.3rem 0.6rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calendar-container">
+      <h1>Islamic Calendar</h1>
+      <div class="calendar-controls">
+        <button id="prev-year">« Previous Year</button>
+        <span id="year-label"></span>
+        <button id="next-year">Next Year »</button>
+      </div>
+      <div id="calendar"></div>
+    </div>
+
+    <!-- Use Local JS files -->
+    <script src="/JS/moment.min.js"></script>
+    <script src="/JS/moment-hijri.min.js"></script>
+
+    <script>
+      window.onload = function () {
+        const calendarEl = document.getElementById("calendar");
+        const yearLabel = document.getElementById("year-label");
+        let currentYear = moment().iYear(); // current Hijri year
+
+        const hijriMonths = [
+          "Muharram",
+          "Safar",
+          "Rabi' al-awwal",
+          "Rabi' al-thani",
+          "Jumada al-awwal",
+          "Jumada al-thani",
+          "Rajab",
+          "Sha'ban",
+          "Ramadan",
+          "Shawwal",
+          "Dhu al-Qi'dah",
+          "Dhu al-Hijjah",
+        ];
+
+        function renderCalendar(year) {
+          calendarEl.innerHTML = "";
+          yearLabel.textContent = year;
+          const today = moment();
+
+          for (let m = 0; m < 12; m++) {
+            const monthDiv = document.createElement("div");
+            monthDiv.className = "month";
+
+            const monthTitle = document.createElement("div");
+            monthTitle.className = "month-title";
+            monthTitle.textContent = `${hijriMonths[m]} ${year}`;
+            monthDiv.appendChild(monthTitle);
+
+            ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach((d) => {
+              const wd = document.createElement("div");
+              wd.className = "weekday";
+              wd.textContent = d;
+              monthDiv.appendChild(wd);
+            });
+
+            const monthStart = moment().iYear(year).iMonth(m).startOf("iMonth");
+            const daysInMonth = monthStart.iDaysInMonth();
+            const firstDay = monthStart.day();
+
+            for (let i = 0; i < firstDay; i++)
+              monthDiv.appendChild(document.createElement("div"));
+
+            for (let d = 1; d <= daysInMonth; d++) {
+              const dayEl = document.createElement("div");
+              dayEl.className = "hijri-day";
+              const gDate = monthStart.clone().iDate(d);
+              dayEl.innerHTML = `<strong>${gDate.iDate()}</strong> / ${gDate.date()}`;
+              if (
+                today.iYear() === year &&
+                today.iMonth() === m &&
+                today.iDate() === d
+              )
+                dayEl.classList.add("today");
+              monthDiv.appendChild(dayEl);
+            }
+
+            calendarEl.appendChild(monthDiv);
+          }
+        }
+
+        document.getElementById("prev-year").addEventListener("click", () => {
+          currentYear--;
+          renderCalendar(currentYear);
+        });
+        document.getElementById("next-year").addEventListener("click", () => {
+          currentYear++;
+          renderCalendar(currentYear);
+        });
+
+        renderCalendar(currentYear);
+      };
+    </script>
+  </body>
+</html>
