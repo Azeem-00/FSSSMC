@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FSSMC Mosque</title>
-    <link rel="stylesheet" href="/CSS/quran.css" />
+    <title>FSSSMC Mosque</title>
+    <link rel="stylesheet" href="CSS/learn.css" />
+    <link rel="manifest" href="manifest.json" />
   </head>
   <body>
-    <!-- HEADER -->
     <header class="site-header">
       <div class="header-inner">
         <div class="logo">
@@ -21,11 +21,12 @@
         <nav class="main-nav">
           <ul>
             <li><a href="home.html">Home</a></li>
+            <li><a href="about.html">About & Services</a></li>
             <li><a href="prayer.html">Prayer Times</a></li>
             <li><a href="events.html">Events</a></li>
             <li><a href="calendar.html">Calendar</a></li>
-            <li><a class="active" href="quran.html">Quran</a></li>
-            <li><a class="nav-btn" href="donate.html">Donate</a></li>
+            <li><a class="active" href="learn.html">Learn</a></li>
+            <li><a class="nav-btn" href="involve.html">Get Involved</a></li>
             <li><a class="nav-btn" href="contact.html">Contact</a></li>
           </ul>
         </nav>
@@ -36,8 +37,10 @@
       <h2>Read Quran</h2>
       <a class="btn" href="https://quran.com" target="_blank">Open Quran</a>
     </main>
-    <footer class="site-footer">
-      <p>© 2026 FSSSMC Mosque. All Rights Reserved.</p>
-    </footer>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/JS/service-worker.js");
+      }
+    </script>
   </body>
 </html>

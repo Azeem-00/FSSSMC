@@ -3,175 +3,766 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FSSMC Mosque - Islamic Calendar</title>
-    <style>
-      body {
-        font-family: "Segoe UI", sans-serif;
-        background: #f6f8f9;
-        margin: 0;
-        padding: 0;
-      }
-      .calendar-container {
-        max-width: 900px;
-        margin: 120px auto;
-        padding: 1.5rem;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      }
-      .calendar-controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-      .calendar-controls button {
-        padding: 0.4rem 0.8rem;
-        background: #3cb371;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-      }
-      #calendar {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-      }
-      .month {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 5px;
-      }
-      .month-title {
-        grid-column: span 7;
-        font-weight: 700;
-        text-align: center;
-        margin-top: 15px;
-        margin-bottom: 5px;
-      }
-      .weekday {
-        font-weight: 600;
-        text-align: center;
-      }
-      .hijri-day {
-        padding: 8px;
-        background: #f0f6f5;
-        border-radius: 6px;
-        text-align: center;
-      }
-      .hijri-day.today {
-        background: #3cb371;
-        color: white;
-        font-weight: 700;
-      }
-      @media (max-width: 768px) {
-        .hijri-day {
-          font-size: 0.8rem;
-          padding: 6px;
-        }
-        .month-title {
-          font-size: 1rem;
-        }
-        .calendar-controls button {
-          padding: 0.3rem 0.6rem;
-        }
-      }
-    </style>
+    <title>FSSMC Mosque</title>
+    <link rel="stylesheet" href="/CSS/calendar.css" />
   </head>
   <body>
-    <div class="calendar-container">
-      <h1>Islamic Calendar</h1>
-      <div class="calendar-controls">
-        <button id="prev-year">« Previous Year</button>
-        <span id="year-label"></span>
-        <button id="next-year">Next Year »</button>
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="logo">
+          <img src="IMAGE/FSSMC ICON.jpeg" alt="FSSMC Mosque Logo" />
+          <span>FSSSMC Mosque</span>
+        </div>
+        <input type="checkbox" id="menu-toggle" />
+        <label for="menu-toggle" class="menu-icon">
+          <span></span><span></span><span></span>
+        </label>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="about.html">About & Services</a></li>
+            <li><a href="prayer.html">Prayer Times</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a class="active" href="calendar.html">Calendar</a></li>
+            <li><a href="learn.html">Learn</a></li>
+            <li><a class="nav-btn" href="involve.html">Get Involved</a></li>
+            <li><a class="nav-btn" href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
       </div>
-      <div id="calendar"></div>
-    </div>
+    </header>
 
-    <!-- Use Local JS files -->
-    <script src="/JS/moment.min.js"></script>
-    <script src="/JS/moment-hijri.min.js"></script>
+    <!-- MAIN CALENDAR -->
+    <main class="calendar-container">
+      <h1 class="page-title">Islamic Calendar 2026 (1447–1448 Hijri)</h1>
 
-    <script>
-      window.onload = function () {
-        const calendarEl = document.getElementById("calendar");
-        const yearLabel = document.getElementById("year-label");
-        let currentYear = moment().iYear(); // current Hijri year
+      <!-- IMPORTANT ISLAMIC DATES -->
+      <h2 class="section-title">Important Islamic Dates</h2>
+      <table class="dates-table">
+        <tr>
+          <th>Event</th>
+          <th>Date</th>
+          <th>Hijri</th>
+        </tr>
+        <tr>
+          <td>Ramadan Begins</td>
+          <td>Feb 18, 2026</td>
+          <td>1 Ramadan 1447</td>
+        </tr>
+        <tr>
+          <td>Eid al-Fitr</td>
+          <td>Mar 20, 2026</td>
+          <td>1 Shawwal 1447</td>
+        </tr>
+        <tr>
+          <td>Hajj Begins</td>
+          <td>May 22, 2026</td>
+          <td>8 Dhul Hijjah 1447</td>
+        </tr>
+        <tr>
+          <td>Eid al-Adha</td>
+          <td>May 27, 2026</td>
+          <td>10 Dhul Hijjah 1447</td>
+        </tr>
+        <tr>
+          <td>Islamic New Year</td>
+          <td>Jun 17, 2026</td>
+          <td>1 Muharram 1448</td>
+        </tr>
+        <tr>
+          <td>Ashura</td>
+          <td>Jun 26, 2026</td>
+          <td>10 Muharram 1448</td>
+        </tr>
+        <tr>
+          <td>Mawlid</td>
+          <td>Aug 25, 2026</td>
+          <td>12 Rabi al-Awwal 1448</td>
+        </tr>
+      </table>
 
-        const hijriMonths = [
-          "Muharram",
-          "Safar",
-          "Rabi' al-awwal",
-          "Rabi' al-thani",
-          "Jumada al-awwal",
-          "Jumada al-thani",
-          "Rajab",
-          "Sha'ban",
-          "Ramadan",
-          "Shawwal",
-          "Dhu al-Qi'dah",
-          "Dhu al-Hijjah",
-        ];
+      <!-- MONTHLY CALENDARS -->
+      <!-- January -->
+      <section>
+        <h2 class="section-title">January 2026 (Rajab – Sha’ban 1447)</h2>
+        <div class="calendar">
+          <div class="calendar-header">
+            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+          </div>
+          <div class="calendar-grid">
+            <div class="empty"></div><div class="empty"></div><div class="empty"></div>
+            <div class="day"><strong>1</strong>12 Rajab</div>
+            <div class="day"><strong>2</strong>13 Rajab</div>
+            <div class="day"><strong>3</strong>14 Rajab</div>
+            <div class="day"><strong>4</strong>15 Rajab</div>
+            <div class="day"><strong>5</strong>16 Rajab</div>
+            <div class="day"><strong>6</strong>17 Rajab</div>
+            <div class="day"><strong>7</strong>18 Rajab</div>
+            <div class="day"><strong>8</strong>19 Rajab</div>
+            <div class="day"><strong>9</strong>20 Rajab</div>
+            <div class="day"><strong>10</strong>21 Rajab</div>
+            <div class="day"><strong>11</strong>22 Rajab</div>
+            <div class="day"><strong>12</strong>23 Rajab</div>
+            <div class="day"><strong>13</strong>24 Rajab</div>
+            <div class="day"><strong>14</strong>25 Rajab</div>
+            <div class="day"><strong>15</strong>26 Rajab</div>
+            <div class="day"><strong>16</strong>27 Rajab</div>
+            <div class="day"><strong>17</strong>28 Rajab</div>
+            <div class="day"><strong>18</strong>29 Rajab</div>
+            <div class="day"><strong>19</strong>30 Rajab</div>
+            <div class="day"><strong>20</strong>1 Sha’ban</div>
+            <div class="day"><strong>21</strong>2 Sha’ban</div>
+            <div class="day"><strong>22</strong>3 Sha’ban</div>
+            <div class="day"><strong>23</strong>4 Sha’ban</div>
+            <div class="day"><strong>24</strong>5 Sha’ban</div>
+            <div class="day"><strong>25</strong>6 Sha’ban</div>
+            <div class="day"><strong>26</strong>7 Sha’ban</div>
+            <div class="day"><strong>27</strong>8 Sha’ban</div>
+            <div class="day"><strong>28</strong>9 Sha’ban</div>
+            <div class="day"><strong>29</strong>10 Sha’ban</div>
+            <div class="day"><strong>30</strong>11 Sha’ban</div>
+            <div class="day"><strong>31</strong>12 Sha’ban</div>
+          </div>
+        </div>
+      </section>
 
-        function renderCalendar(year) {
-          calendarEl.innerHTML = "";
-          yearLabel.textContent = year;
-          const today = moment();
+      <!-- February -->
+      <section>
+        <h2 class="section-title">February 2026 (Sha’ban – Ramadan)</h2>
+        <div class="calendar">
+          <div class="calendar-header">
+            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+          </div>
+          <div class="calendar-grid">
+            <div class="empty"></div><div class="empty"></div><div class="empty"></div>
+            <div class="empty"></div><div class="empty"></div><div class="empty"></div>
+            <div class="day"><strong>1</strong>13 Sha’ban</div>
+            <div class="day"><strong>2</strong>14 Sha’ban</div>
+            <div class="day"><strong>3</strong>15 Sha’ban</div>
+            <div class="day"><strong>4</strong>16 Sha’ban</div>
+            <div class="day"><strong>5</strong>17 Sha’ban</div>
+            <div class="day"><strong>6</strong>18 Sha’ban</div>
+            <div class="day"><strong>7</strong>19 Sha’ban</div>
+            <div class="day"><strong>8</strong>20 Sha’ban</div>
+            <div class="day"><strong>9</strong>21 Sha’ban</div>
+            <div class="day"><strong>10</strong>22 Sha’ban</div>
+            <div class="day"><strong>11</strong>23 Sha’ban</div>
+            <div class="day"><strong>12</strong>24 Sha’ban</div>
+            <div class="day"><strong>13</strong>25 Sha’ban</div>
+            <div class="day"><strong>14</strong>26 Sha’ban</div>
+            <div class="day"><strong>15</strong>27 Sha’ban</div>
+            <div class="day"><strong>16</strong>28 Sha’ban</div>
+            <div class="day"><strong>17</strong>29 Sha’ban</div>
+            <div class="day"><strong>18</strong>1 Ramadan</div>
+            <div class="day"><strong>19</strong>2 Ramadan</div>
+            <div class="day"><strong>20</strong>3 Ramadan</div>
+            <div class="day"><strong>21</strong>4 Ramadan</div>
+            <div class="day"><strong>22</strong>5 Ramadan</div>
+            <div class="day"><strong>23</strong>6 Ramadan</div>
+            <div class="day"><strong>24</strong>7 Ramadan</div>
+            <div class="day"><strong>25</strong>8 Ramadan</div>
+            <div class="day"><strong>26</strong>9 Ramadan</div>
+            <div class="day"><strong>27</strong>10 Ramadan</div>
+            <div class="day"><strong>28</strong>11 Ramadan</div>
+          </div>
+        </div>
+      </section>
 
-          for (let m = 0; m < 12; m++) {
-            const monthDiv = document.createElement("div");
-            monthDiv.className = "month";
+  <section>
+      <!-- MARCH -->
+      <h2 class="section-title">March 2026 (Ramadan – Shawwal)</h2>
 
-            const monthTitle = document.createElement("div");
-            monthTitle.className = "month-title";
-            monthTitle.textContent = `${hijriMonths[m]} ${year}`;
-            monthDiv.appendChild(monthTitle);
+      <div class="calendar">
+        <div class="calendar-header">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
 
-            ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach((d) => {
-              const wd = document.createElement("div");
-              wd.className = "weekday";
-              wd.textContent = d;
-              monthDiv.appendChild(wd);
-            });
+       <div class="calendar-grid">
+  <div class="empty"></div> <!-- Monday -->
+  <div class="empty"></div> <!-- Tuesday -->
+  <div class="empty"></div> <!-- Wednesday -->
+  <div class="empty"></div> <!-- Thursday -->
+  <div class="empty"></div> <!-- Friday -->
 
-            const monthStart = moment().iYear(year).iMonth(m).startOf("iMonth");
-            const daysInMonth = monthStart.iDaysInMonth();
-            const firstDay = monthStart.day();
+  <div class="day"><strong>1</strong>12 Ramadan</div> <!-- Saturday -->
+  <div class="day"><strong>2</strong>13 Ramadan</div> <!-- Sunday -->
 
-            for (let i = 0; i < firstDay; i++)
-              monthDiv.appendChild(document.createElement("div"));
+  <div class="day"><strong>3</strong>14 Ramadan</div>
+  <div class="day"><strong>4</strong>15 Ramadan</div>
+  <div class="day"><strong>5</strong>16 Ramadan</div>
+  <div class="day"><strong>6</strong>17 Ramadan</div>
+  <div class="day"><strong>7</strong>18 Ramadan</div>
+  <div class="day"><strong>8</strong>19 Ramadan</div>
+  <div class="day"><strong>9</strong>20 Ramadan</div>
 
-            for (let d = 1; d <= daysInMonth; d++) {
-              const dayEl = document.createElement("div");
-              dayEl.className = "hijri-day";
-              const gDate = monthStart.clone().iDate(d);
-              dayEl.innerHTML = `<strong>${gDate.iDate()}</strong> / ${gDate.date()}`;
-              if (
-                today.iYear() === year &&
-                today.iMonth() === m &&
-                today.iDate() === d
-              )
-                dayEl.classList.add("today");
-              monthDiv.appendChild(dayEl);
-            }
+  <div class="day"><strong>10</strong>21 Ramadan</div>
+  <div class="day"><strong>11</strong>22 Ramadan</div>
+  <div class="day"><strong>12</strong>23 Ramadan</div>
+  <div class="day"><strong>13</strong>24 Ramadan</div>
+  <div class="day"><strong>14</strong>25 Ramadan</div>
+  <div class="day"><strong>15</strong>26 Ramadan</div>
+  <div class="day"><strong>16</strong>27 Ramadan</div>
 
-            calendarEl.appendChild(monthDiv);
-          }
-        }
+  <div class="day"><strong>17</strong>28 Ramadan</div>
+  <div class="day"><strong>18</strong>29 Ramadan</div>
+  <div class="day"><strong>19</strong>30 Ramadan</div>
+  <div class="day"><strong>20</strong>1 Shawwal</div>
+  <div class="day"><strong>21</strong>2 Shawwal</div>
+  <div class="day"><strong>22</strong>3 Shawwal</div>
+  <div class="day"><strong>23</strong>4 Shawwal</div>
 
-        document.getElementById("prev-year").addEventListener("click", () => {
-          currentYear--;
-          renderCalendar(currentYear);
-        });
-        document.getElementById("next-year").addEventListener("click", () => {
-          currentYear++;
-          renderCalendar(currentYear);
-        });
+  <div class="day"><strong>24</strong>5 Shawwal</div>
+  <div class="day"><strong>25</strong>6 Shawwal</div>
+  <div class="day"><strong>26</strong>7 Shawwal</div>
+  <div class="day"><strong>27</strong>8 Shawwal</div>
+  <div class="day"><strong>28</strong>9 Shawwal</div>
+  <div class="day"><strong>29</strong>10 Shawwal</div>
+  <div class="day"><strong>30</strong>11 Shawwal</div>
+  <div class="day"><strong>31</strong>12 Shawwal</div>
+</div>
 
-        renderCalendar(currentYear);
-      };
+      <!-- APRIL -->
+
+</section>
+      <h2 class="section-title">April 2026 (Shawwal – Dhul Qa’dah)</h2>
+
+      <div class="calendar">
+        <div class="calendar-header">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
+
+<div class="calendar-grid">
+  <div class="empty"></div> <!-- Monday -->
+
+  <div class="day"><strong>1</strong>13 Shawwal</div> <!-- Tuesday -->
+  <div class="day"><strong>2</strong>14 Shawwal</div>
+  <div class="day"><strong>3</strong>15 Shawwal</div>
+  <div class="day"><strong>4</strong>16 Shawwal</div>
+  <div class="day"><strong>5</strong>17 Shawwal</div>
+  <div class="day"><strong>6</strong>18 Shawwal</div>
+
+  <div class="day"><strong>7</strong>19 Shawwal</div>
+  <div class="day"><strong>8</strong>20 Shawwal</div>
+  <div class="day"><strong>9</strong>21 Shawwal</div>
+  <div class="day"><strong>10</strong>22 Shawwal</div>
+  <div class="day"><strong>11</strong>23 Shawwal</div>
+  <div class="day"><strong>12</strong>24 Shawwal</div>
+  <div class="day"><strong>13</strong>25 Shawwal</div>
+
+  <div class="day"><strong>14</strong>26 Shawwal</div>
+  <div class="day"><strong>15</strong>27 Shawwal</div>
+  <div class="day"><strong>16</strong>28 Shawwal</div>
+  <div class="day"><strong>17</strong>29 Shawwal</div> <!-- Last day of Shawwal -->
+  <div class="day"><strong>18</strong>1 Dhul Qa’dah</div>
+  <div class="day"><strong>19</strong>2 Dhul Qa’dah</div>
+  <div class="day"><strong>20</strong>3 Dhul Qa’dah</div>
+
+  <div class="day"><strong>21</strong>4 Dhul Qa’dah</div>
+  <div class="day"><strong>22</strong>5 Dhul Qa’dah</div>
+  <div class="day"><strong>23</strong>6 Dhul Qa’dah</div>
+  <div class="day"><strong>24</strong>7 Dhul Qa’dah</div>
+  <div class="day"><strong>25</strong>8 Dhul Qa’dah</div>
+  <div class="day"><strong>26</strong>9 Dhul Qa’dah</div>
+  <div class="day"><strong>27</strong>10 Dhul Qa’dah</div>
+
+  <div class="day"><strong>28</strong>11 Dhul Qa’dah</div>
+  <div class="day"><strong>29</strong>12 Dhul Qa’dah</div>
+  <div class="day"><strong>30</strong>13 Dhul Qa’dah</div>
+</div>
+
+
+      <!-- MAY -->
+       <section>
+      <h2 class="section-title">May 2026 (Dhul Qa’dah – Dhul Hijjah)</h2>
+
+      <div class="calendar">
+        <div class="calendar-header">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="empty"></div>
+          <div class="empty"></div>
+          <div class="empty"></div>
+          
+
+          <div class="day"><strong>1</strong>14 Dhul Qa’dah</div>
+          <div class="day"><strong>2</strong>15 Dhul Qa’dah</div>
+          <div class="day"><strong>3</strong>16 Dhul Qa’dah</div>
+
+          <div class="day"><strong>4</strong>17 Dhul Qa’dah</div>
+          <div class="day"><strong>5</strong>18 Dhul Qa’dah</div>
+          <div class="day"><strong>6</strong>19 Dhul Qa’dah</div>
+          <div class="day"><strong>7</strong>20 Dhul Qa’dah</div>
+          <div class="day"><strong>8</strong>21 Dhul Qa’dah</div>
+          <div class="day"><strong>9</strong>22 Dhul Qa’dah</div>
+          <div class="day"><strong>10</strong>23 Dhul Qa’dah</div>
+
+          <div class="day"><strong>11</strong>24 Dhul Qa’dah</div>
+          <div class="day"><strong>12</strong>25 Dhul Qa’dah</div>
+          <div class="day"><strong>13</strong>26 Dhul Qa’dah</div>
+          <div class="day"><strong>14</strong>27 Dhul Qa’dah</div>
+          <div class="day"><strong>15</strong>28 Dhul Qa’dah</div>
+          <div class="day"><strong>16</strong>29 Dhul Qa’dah</div>
+          <div class="day"><strong>17</strong>30 Dhul Qa’dah</div>
+
+          <div class="day"><strong>18</strong>1 Dhul Hijjah</div>
+          <div class="day"><strong>19</strong>2 Dhul Hijjah</div>
+          <div class="day"><strong>20</strong>3 Dhul Hijjah</div>
+          <div class="day"><strong>21</strong>4 Dhul Hijjah</div>
+          <div class="day"><strong>22</strong>5 Dhul Hijjah</div>
+          <div class="day"><strong>23</strong>6 Dhul Hijjah</div>
+          <div class="day"><strong>24</strong>7 Dhul Hijjah</div>
+
+          <div class="day"><strong>25</strong>8 Dhul Hijjah</div>
+          <div class="day"><strong>26</strong>9 Dhul Hijjah</div>
+          <div class="day"><strong>27</strong>10 Dhul Hijjah (Eid)</div>
+          <div class="day"><strong>28</strong>11 Dhul Hijjah</div>
+          <div class="day"><strong>29</strong>12 Dhul Hijjah</div>
+          <div class="day"><strong>30</strong>13 Dhul Hijjah</div>
+          <div class="day"><strong>31</strong>14 Dhul Hijjah</div>
+        </div>
+      </div>
+</section>
+
+      <!-- JUNE -->
+       <section>
+      <h2 class="section-title">June 2026 (Dhul Hijjah – Muharram 1448)</h2>
+
+      <div class="calendar">
+        <div class="calendar-header">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="day"><strong>1</strong>15 Dhul Hijjah</div>
+          <div class="day"><strong>2</strong>16 Dhul Hijjah</div>
+          <div class="day"><strong>3</strong>17 Dhul Hijjah</div>
+          <div class="day"><strong>4</strong>18 Dhul Hijjah</div>
+          <div class="day"><strong>5</strong>19 Dhul Hijjah</div>
+          <div class="day"><strong>6</strong>20 Dhul Hijjah</div>
+          <div class="day"><strong>7</strong>21 Dhul Hijjah</div>
+
+          <div class="day"><strong>8</strong>22 Dhul Hijjah</div>
+          <div class="day"><strong>9</strong>23 Dhul Hijjah</div>
+          <div class="day"><strong>10</strong>24 Dhul Hijjah</div>
+          <div class="day"><strong>11</strong>25 Dhul Hijjah</div>
+          <div class="day"><strong>12</strong>26 Dhul Hijjah</div>
+          <div class="day"><strong>13</strong>27 Dhul Hijjah</div>
+          <div class="day"><strong>14</strong>28 Dhul Hijjah</div>
+
+          <div class="day"><strong>15</strong>29 Dhul Hijjah</div>
+          <div class="day"><strong>16</strong>30 Dhul Hijjah</div>
+          <div class="day"><strong>17</strong>1 Muharram</div>
+          <div class="day"><strong>18</strong>2 Muharram</div>
+          <div class="day"><strong>19</strong>3 Muharram</div>
+          <div class="day"><strong>20</strong>4 Muharram</div>
+          <div class="day"><strong>21</strong>5 Muharram</div>
+
+          <div class="day"><strong>22</strong>6 Muharram</div>
+          <div class="day"><strong>23</strong>7 Muharram</div>
+          <div class="day"><strong>24</strong>8 Muharram</div>
+          <div class="day"><strong>25</strong>9 Muharram</div>
+          <div class="day"><strong>26</strong>10 Muharram (Ashura)</div>
+          <div class="day"><strong>27</strong>11 Muharram</div>
+          <div class="day"><strong>28</strong>12 Muharram</div>
+
+          <div class="day"><strong>29</strong>13 Muharram</div>
+          <div class="day"><strong>30</strong>14 Muharram</div>
+        </div>
+      </div>
+</section>
+
+      <!-- JULY -->
+       <section>
+      <h2 class="section-title">July 2026 (Muharram – Safar 1448)</h2>
+
+      <div class="calendar">
+        <div class="calendar-header">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="empty"></div>
+          <div class="empty"></div>
+
+          <div class="day"><strong>1</strong>15 Muharram</div>
+          <div class="day"><strong>2</strong>16 Muharram</div>
+          <div class="day"><strong>3</strong>17 Muharram</div>
+          <div class="day"><strong>4</strong>18 Muharram</div>
+          <div class="day"><strong>5</strong>19 Muharram</div>
+
+          <div class="day"><strong>6</strong>20 Muharram</div>
+          <div class="day"><strong>7</strong>21 Muharram</div>
+          <div class="day"><strong>8</strong>22 Muharram</div>
+          <div class="day"><strong>9</strong>23 Muharram</div>
+          <div class="day"><strong>10</strong>24 Muharram</div>
+          <div class="day"><strong>11</strong>25 Muharram</div>
+          <div class="day"><strong>12</strong>26 Muharram</div>
+
+          <div class="day"><strong>13</strong>27 Muharram</div>
+          <div class="day"><strong>14</strong>28 Muharram</div>
+          <div class="day"><strong>15</strong>29 Muharram</div>
+          <div class="day"><strong>16</strong>30 Muharram</div>
+          <div class="day"><strong>17</strong>1 Safar</div>
+          <div class="day"><strong>18</strong>2 Safar</div>
+          <div class="day"><strong>19</strong>3 Safar</div>
+
+          <div class="day"><strong>20</strong>4 Safar</div>
+          <div class="day"><strong>21</strong>5 Safar</div>
+          <div class="day"><strong>22</strong>6 Safar</div>
+          <div class="day"><strong>23</strong>7 Safar</div>
+          <div class="day"><strong>24</strong>8 Safar</div>
+          <div class="day"><strong>25</strong>9 Safar</div>
+          <div class="day"><strong>26</strong>10 Safar</div>
+
+          <div class="day"><strong>27</strong>11 Safar</div>
+          <div class="day"><strong>28</strong>12 Safar</div>
+          <div class="day"><strong>29</strong>13 Safar</div>
+          <div class="day"><strong>30</strong>14 Safar</div>
+          <div class="day"><strong>31</strong>15 Safar</div>
+        </div>
+      </div>
+      </section>
+
+      <!-- AUGUST -->
+       <section>
+      <h2 class="section-title">August 2026 (Safar – Rabi al-Awwal 1448)</h2>
+
+      <div class="calendar">
+        <div class="calendar-header">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="empty"></div>
+          <div class="empty"></div>
+          <div class="empty"></div>
+          <div class="empty"></div>
+          <div class="empty"></div>
+
+          <div class="day"><strong>1</strong>16 Safar</div>
+          <div class="day"><strong>2</strong>17 Safar</div>
+
+          <div class="day"><strong>3</strong>18 Safar</div>
+          <div class="day"><strong>4</strong>19 Safar</div>
+          <div class="day"><strong>5</strong>20 Safar</div>
+          <div class="day"><strong>6</strong>21 Safar</div>
+          <div class="day"><strong>7</strong>22 Safar</div>
+          <div class="day"><strong>8</strong>23 Safar</div>
+          <div class="day"><strong>9</strong>24 Safar</div>
+
+          <div class="day"><strong>10</strong>25 Safar</div>
+          <div class="day"><strong>11</strong>26 Safar</div>
+          <div class="day"><strong>12</strong>27 Safar</div>
+          <div class="day"><strong>13</strong>28 Safar</div>
+          <div class="day"><strong>14</strong>29 Safar</div>
+          <div class="day"><strong>15</strong>1 Rabi al-Awwal</div>
+          <div class="day"><strong>16</strong>2 Rabi al-Awwal</div>
+
+          <div class="day"><strong>17</strong>3 Rabi al-Awwal</div>
+          <div class="day"><strong>18</strong>4 Rabi al-Awwal</div>
+          <div class="day"><strong>19</strong>5 Rabi al-Awwal</div>
+          <div class="day"><strong>20</strong>6 Rabi al-Awwal</div>
+          <div class="day"><strong>21</strong>7 Rabi al-Awwal</div>
+          <div class="day"><strong>22</strong>8 Rabi al-Awwal</div>
+          <div class="day"><strong>23</strong>9 Rabi al-Awwal</div>
+
+          <div class="day"><strong>24</strong>10 Rabi al-Awwal</div>
+          <div class="day"><strong>25</strong>11 Rabi al-Awwal</div>
+          <div class="day"><strong>26</strong>12 Rabi al-Awwal</div>
+          <div class="day"><strong>27</strong>13 Rabi al-Awwal (Mawlid)</div>
+          <div class="day"><strong>28</strong>14 Rabi al-Awwal</div>
+          <div class="day"><strong>29</strong>15 Rabi al-Awwal</div>
+          <div class="day"><strong>30</strong>16 Rabi al-Awwal</div>
+          <div class="day"><strong>31</strong>17 Rabi al-Awwal</div>
+        </div>
+      </div>
+</section>
+
+      <!-- SEPTEMBER -->
+       <section>
+      <h2 class="section-title">
+        September 2026 (Rabi al-Awwal – Rabi al-Thani 1448)
+      </h2>
+
+      <div class="calendar">
+        <div class="calendar-header">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="empty"></div>
+
+          <div class="day"><strong>1</strong>18 Rabi al-Awwal</div>
+          <div class="day"><strong>2</strong>19 Rabi al-Awwal</div>
+          <div class="day"><strong>3</strong>20 Rabi al-Awwal</div>
+          <div class="day"><strong>4</strong>21 Rabi al-Awwal</div>
+          <div class="day"><strong>5</strong>22 Rabi al-Awwal</div>
+          <div class="day"><strong>6</strong>23 Rabi al-Awwal</div>
+
+          <div class="day"><strong>7</strong>24 Rabi al-Awwal</div>
+          <div class="day"><strong>8</strong>25 Rabi al-Awwal</div>
+          <div class="day"><strong>9</strong>26 Rabi al-Awwal</div>
+          <div class="day"><strong>10</strong>27 Rabi al-Awwal</div>
+          <div class="day"><strong>11</strong>28 Rabi al-Awwal</div>
+          <div class="day"><strong>12</strong>29 Rabi al-Awwal</div>
+          <div class="day"><strong>13</strong>30 Rabi al-Awwal</div>
+
+       
+          <div class="day"><strong>14</strong>1 Rabi al-Thani</div>
+          <div class="day"><strong>15</strong>2 Rabi al-Thani</div>
+          <div class="day"><strong>16</strong>3 Rabi al-Thani</div>
+          <div class="day"><strong>17</strong>4 Rabi al-Thani</div>
+          <div class="day"><strong>18</strong>5 Rabi al-Thani</div>
+          <div class="day"><strong>19</strong>6 Rabi al-Thani</div>
+
+          <div class="day"><strong>20</strong>7 Rabi al-Thani</div>
+          <div class="day"><strong>21</strong>8 Rabi al-Thani</div>
+          <div class="day"><strong>22</strong>9 Rabi al-Thani</div>
+          <div class="day"><strong>23</strong>10 Rabi al-Thani</div>
+          <div class="day"><strong>24</strong>11 Rabi al-Thani</div>
+          <div class="day"><strong>25</strong>12 Rabi al-Thani</div>
+          <div class="day"><strong>26</strong>13 Rabi al-Thani</div>
+
+          <div class="day"><strong>27</strong>14 Rabi al-Thani</div>
+          <div class="day"><strong>28</strong>15 Rabi al-Thani</div>
+          <div class="day"><strong>29</strong>16 Rabi al-Thani</div>
+          <div class="day"><strong>30</strong>17 Rabi al-Thani</div>
+        </div>
+      </div>
+</section>
+
+      <!-- OCTOBER -->
+       <section>
+      <h2 class="section-title">
+        October 2026 (Rabi al-Thani – Jumada al-Ula 1448)
+      </h2>
+
+      <div class="calendar">
+        <div class="calendar-header">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="empty"></div>
+          <div class="empty"></div>
+          <div class="empty"></div>
+
+          <div class="day"><strong>1</strong>18 Rabi al-Thani</div>
+          <div class="day"><strong>2</strong>19 Rabi al-Thani</div>
+          <div class="day"><strong>3</strong>20 Rabi al-Thani</div>
+          <div class="day"><strong>4</strong>21 Rabi al-Thani</div>
+
+          <div class="day"><strong>5</strong>22 Rabi al-Thani</div>
+          <div class="day"><strong>6</strong>23 Rabi al-Thani</div>
+          <div class="day"><strong>7</strong>24 Rabi al-Thani</div>
+          <div class="day"><strong>8</strong>25 Rabi al-Thani</div>
+          <div class="day"><strong>9</strong>26 Rabi al-Thani</div>
+          <div class="day"><strong>10</strong>27 Rabi al-Thani</div>
+          <div class="day"><strong>11</strong>28 Rabi al-Thani</div>
+
+          <div class="day"><strong>12</strong>29 Rabi al-Thani</div>
+          <div class="day"><strong>13</strong>1 Jumada al-Ula</div>
+          <div class="day"><strong>14</strong>2 Jumada al-Ula</div>
+          <div class="day"><strong>15</strong>3 Jumada al-Ula</div>
+          <div class="day"><strong>16</strong>4 Jumada al-Ula</div>
+          <div class="day"><strong>17</strong>5 Jumada al-Ula</div>
+          <div class="day"><strong>18</strong>6 Jumada al-Ula</div>
+
+          <div class="day"><strong>19</strong>7 Jumada al-Ula</div>
+          <div class="day"><strong>20</strong>8 Jumada al-Ula</div>
+          <div class="day"><strong>21</strong>9 Jumada al-Ula</div>
+          <div class="day"><strong>22</strong>10 Jumada al-Ula</div>
+          <div class="day"><strong>23</strong>11 Jumada al-Ula</div>
+          <div class="day"><strong>24</strong>12 Jumada al-Ula</div>
+          <div class="day"><strong>25</strong>13 Jumada al-Ula</div>
+
+          <div class="day"><strong>26</strong>14 Jumada al-Ula</div>
+          <div class="day"><strong>27</strong>15 Jumada al-Ula</div>
+          <div class="day"><strong>28</strong>16 Jumada al-Ula</div>
+          <div class="day"><strong>29</strong>17 Jumada al-Ula</div>
+          <div class="day"><strong>30</strong>18 Jumada al-Ula</div>
+          <div class="day"><strong>31</strong>19 Jumada al-Ula</div>
+        </div>
+      </div>
+</section>
+
+      <!-- NOVEMBER -->
+       <section>
+      <h2 class="section-title">
+        November 2026 (Jumada al-Ula – Jumada al-Thani 1448)
+      </h2>
+
+      <div class="calendar">
+        <div class="calendar-header">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="empty"></div>
+          <div class="empty"></div>
+          <div class="empty"></div>
+          <div class="empty"></div>
+          <div class="empty"></div>
+          <div class="empty"></div>
+
+          <div class="day"><strong>1</strong>20 Jumada al-Ula</div>
+
+          <div class="day"><strong>2</strong>21 Jumada al-Ula</div>
+          <div class="day"><strong>3</strong>22 Jumada al-Ula</div>
+          <div class="day"><strong>4</strong>23 Jumada al-Ula</div>
+          <div class="day"><strong>5</strong>24 Jumada al-Ula</div>
+          <div class="day"><strong>6</strong>25 Jumada al-Ula</div>
+          <div class="day"><strong>7</strong>26 Jumada al-Ula</div>
+          <div class="day"><strong>8</strong>27 Jumada al-Ula</div>
+
+          <div class="day"><strong>9</strong>28 Jumada al-Ula</div>
+          <div class="day"><strong>10</strong>29 Jumada al-Ula</div>
+          <div class="day"><strong>11</strong>30 Jumada al-Ula</div>
+          <div class="day"><strong>12</strong>1 Jumada al-Thani</div>
+          <div class="day"><strong>13</strong>2 Jumada al-Thani</div>
+          <div class="day"><strong>14</strong>3 Jumada al-Thani</div>
+          <div class="day"><strong>15</strong>4 Jumada al-Thani</div>
+
+          <div class="day"><strong>16</strong>5 Jumada al-Thani</div>
+          <div class="day"><strong>17</strong>6 Jumada al-Thani</div>
+          <div class="day"><strong>18</strong>7 Jumada al-Thani</div>
+          <div class="day"><strong>19</strong>8 Jumada al-Thani</div>
+          <div class="day"><strong>20</strong>9 Jumada al-Thani</div>
+          <div class="day"><strong>21</strong>10 Jumada al-Thani</div>
+          <div class="day"><strong>22</strong>11 Jumada al-Thani</div>
+
+          <div class="day"><strong>23</strong>12 Jumada al-Thani</div>
+          <div class="day"><strong>24</strong>13 Jumada al-Thani</div>
+          <div class="day"><strong>25</strong>14 Jumada al-Thani</div>
+          <div class="day"><strong>26</strong>15 Jumada al-Thani</div>
+          <div class="day"><strong>27</strong>16 Jumada al-Thani</div>
+          <div class="day"><strong>28</strong>17 Jumada al-Thani</div>
+          <div class="day"><strong>29</strong>18 Jumada al-Thani</div>
+
+          <div class="day"><strong>30</strong>19 Jumada al-Thani</div>
+        </div>
+      </div>
+      </section>
+
+      <!-- DECEMBER -->
+       <section>
+      <h2 class="section-title">
+        December 2026 (Jumada al-Thani – Rajab 1448)
+      </h2>
+
+      <div class="calendar">
+        <div class="calendar-header">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="empty"></div>
+          <div class="day"><strong>1</strong>20 Jumada al-Thani</div>
+          <div class="day"><strong>2</strong>21 Jumada al-Thani</div>
+          <div class="day"><strong>3</strong>22 Jumada al-Thani</div>
+          <div class="day"><strong>4</strong>23 Jumada al-Thani</div>
+          <div class="day"><strong>5</strong>24 Jumada al-Thani</div>
+          <div class="day"><strong>6</strong>25 Jumada al-Thani</div>
+
+          <div class="day"><strong>7</strong>26 Jumada al-Thani</div>
+          <div class="day"><strong>8</strong>27 Jumada al-Thani</div>
+          <div class="day"><strong>9</strong>28 Jumada al-Thani</div>
+          <div class="day"><strong>10</strong>29 Jumada al-Thani</div>
+          <div class="day"><strong>11</strong>1 Rajab</div>
+          <div class="day"><strong>12</strong>2 Rajab</div>
+          <div class="day"><strong>13</strong>3 Rajab</div>
+
+          <div class="day"><strong>14</strong>4 Rajab</div>
+          <div class="day"><strong>15</strong>5 Rajab</div>
+          <div class="day"><strong>16</strong>6 Rajab</div>
+          <div class="day"><strong>17</strong>7 Rajab</div>
+          <div class="day"><strong>18</strong>8 Rajab</div>
+          <div class="day"><strong>19</strong>9 Rajab</div>
+          <div class="day"><strong>20</strong>10 Rajab</div>
+
+          <div class="day"><strong>21</strong>11 Rajab</div>
+          <div class="day"><strong>22</strong>12 Rajab</div>
+          <div class="day"><strong>23</strong>13 Rajab</div>
+          <div class="day"><strong>24</strong>14 Rajab</div>
+          <div class="day"><strong>25</strong>15 Rajab</div>
+          <div class="day"><strong>26</strong>16 Rajab</div>
+          <div class="day"><strong>27</strong>17 Rajab</div>
+
+          <div class="day"><strong>28</strong>18 Rajab</div>
+          <div class="day"><strong>29</strong>19 Rajab</div>
+          <div class="day"><strong>30</strong>20 Rajab</div>
+          <div class="day"><strong>31</strong>21 Rajab</div>
+        </div>
+      </div>
+      </section>
+    </main>
+       <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/JS/service-worker.js");
+      }
     </script>
   </body>
 </html>

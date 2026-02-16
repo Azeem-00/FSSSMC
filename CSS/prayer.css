@@ -1,12 +1,9 @@
-/* =====================================================
-   RESET & BASE
-===================================================== */
+/* ===================================================== RESET & BASE */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 html,
 body {
   font-family: "Segoe UI", system-ui, sans-serif;
@@ -15,9 +12,7 @@ body {
   overflow-x: hidden;
 }
 
-/* =====================================================
-   HEADER
-===================================================== */
+/* ===================================================== HEADER */
 .site-header {
   position: fixed;
   top: 0;
@@ -26,9 +21,7 @@ body {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(10px);
   z-index: 1000;
-  transition: background 0.4s ease;
 }
-
 .header-inner {
   max-width: 1250px;
   margin: auto;
@@ -38,30 +31,25 @@ body {
   align-items: center;
   justify-content: space-between;
 }
-
 .logo {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   font-weight: 700;
 }
-
 .logo img {
   width: 42px;
   height: auto;
   border-radius: 6px;
 }
-
 .logo span {
   font-size: 1.1rem;
 }
-
 .main-nav ul {
   display: flex;
   gap: 1.4rem;
   list-style: none;
 }
-
 .main-nav a {
   text-decoration: none;
   color: #1f2d28;
@@ -69,7 +57,6 @@ body {
   position: relative;
   transition: color 0.3s ease;
 }
-
 .main-nav a::after {
   content: "";
   position: absolute;
@@ -80,15 +67,13 @@ body {
   background: #3cb371;
   transition: width 0.3s ease;
 }
-
 .main-nav a:hover::after,
 .main-nav a.active::after {
   width: 100%;
 }
-
 .nav-btn {
   background: #3cb371;
-  color: #ffffff !important;
+  color: #fff !important;
   padding: 0.45rem 0.9rem;
   border-radius: 6px;
 }
@@ -97,21 +82,17 @@ body {
 #menu-toggle {
   display: none;
 }
-
 .menu-icon {
   display: none;
   flex-direction: column;
   gap: 5px;
   cursor: pointer;
 }
-
 .menu-icon span {
   width: 24px;
   height: 2px;
   background: #1f2d28;
 }
-
-/* Mobile menu */
 @media (max-width: 900px) {
   .menu-icon {
     display: flex;
@@ -139,38 +120,31 @@ body {
   }
 }
 
-/* =====================================================
-   MAIN CONTAINER
-===================================================== */
+/* ===================================================== MAIN */
 .container {
   max-width: 1100px;
   margin: auto;
-  padding: calc(78px + 5vw) 5vw 5vw 5vw; /* content starts below header */
+  padding: calc(78px + 5vw) 5vw 5vw 5vw;
   text-align: center;
   box-sizing: border-box;
 }
-
-/* Responsive heading */
 .container h1 {
   font-size: clamp(1.5rem, 2vw + 1rem, 2rem);
   margin-bottom: 10px;
   font-weight: 600;
 }
-
-/* LOCATION & COUNTDOWN */
 #location {
   font-size: clamp(0.9rem, 1vw + 0.5rem, 1rem);
   color: #3cb371;
   margin-bottom: 20px;
   font-weight: 500;
 }
-
 #countdown {
   font-size: clamp(1.2rem, 2vw + 0.5rem, 1.5rem);
   font-weight: 600;
   color: #3cb371;
   margin-bottom: 30px;
-  background: white;
+  background: #fff;
   padding: 12px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -182,8 +156,6 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: clamp(10px, 2vw, 20px);
 }
-
-/* PRAYER CARD */
 .card {
   background: #fff;
   padding: clamp(15px, 2vw, 22px);
@@ -193,66 +165,52 @@ body {
   position: relative;
   cursor: pointer;
 }
-
 .card h2 {
   font-size: clamp(1rem, 2vw, 1.25rem);
   margin-bottom: 12px;
   font-weight: 600;
 }
-
 .adhan {
   font-size: clamp(1rem, 2vw, 1.35rem);
   font-weight: 700;
   color: #1f2d28;
   margin-bottom: 5px;
 }
-
 .solat {
   font-size: clamp(0.9rem, 1.5vw, 1rem);
   color: #6b7c76;
   font-weight: 500;
 }
-
-/* HOVER EFFECT */
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
-
-/* CURRENT PRAYER */
 .card.active {
   background: #3cb371;
   color: #fff;
 }
-
 .card.active .adhan,
 .card.active .solat,
 .card.active h2 {
   color: #fff;
 }
-
-/* Hover for current prayer */
 .card.active:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
-  background: #3cb371; /* remain green */
+  background: #3cb371;
   color: #fff;
 }
 
-/* =====================================================
-   QIBLA COMPASS
-===================================================== */
+/* ===================================================== QIBLA COMPASS */
 .qibla-container {
   margin-top: 40px;
   text-align: center;
 }
-
 .qibla-title {
   font-size: clamp(1.2rem, 2vw, 1.4rem);
   font-weight: 600;
   margin-bottom: 15px;
 }
-
 #compass {
   background: radial-gradient(circle, #ffffff, #eef4f1);
   border-radius: 50%;
@@ -264,7 +222,6 @@ body {
   width: 180px;
   height: 180px;
 }
-
 .qibla-label {
   margin-top: 12px;
   font-weight: 600;
@@ -272,7 +229,7 @@ body {
   font-size: clamp(1rem, 1.5vw, 1.1rem);
 }
 
-/* MOBILE OPTIMIZATION */
+/* MOBILE */
 @media (max-width: 600px) {
   .container {
     padding: calc(78px + 20px) 15px 30px 15px;

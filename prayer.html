@@ -3,9 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#000000" />
-    <title>FSSMC Mosque - Prayer Times</title>
-    <link rel="stylesheet" href="/CSS/prayer.css" />
+    <title>FSSSMC Mosque</title>
+    <link rel="stylesheet" href="CSS/prayer.css" />
     <link rel="manifest" href="manifest.json" />
   </head>
   <body>
@@ -23,11 +22,12 @@
         <nav class="main-nav">
           <ul>
             <li><a href="home.html">Home</a></li>
+            <li><a href="about.html">About & Services</a></li>
             <li><a class="active" href="prayer.html">Prayer Times</a></li>
             <li><a href="events.html">Events</a></li>
             <li><a href="calendar.html">Calendar</a></li>
-            <li><a href="quran.html">Quran</a></li>
-            <li><a class="nav-btn" href="donate.html">Donate</a></li>
+            <li><a href="learn.html">Quran</a></li>
+            <li><a class="nav-btn" href="involve.html">Get Involved</a></li>
             <li><a class="nav-btn" href="contact.html">Contact</a></li>
           </ul>
         </nav>
@@ -40,7 +40,6 @@
         <h1>Prayer Times</h1>
 
         <div id="location">Detecting location...</div>
-
         <div id="countdown">Loading...</div>
 
         <div class="grid">
@@ -49,25 +48,21 @@
             <p class="adhan" id="adhanFajr">--</p>
             <p class="solat" id="solatFajr">--</p>
           </div>
-
           <div class="card" id="Dhuhr">
             <h2>Dhuhr</h2>
             <p class="adhan" id="adhanDhuhr">--</p>
             <p class="solat" id="solatDhuhr">--</p>
           </div>
-
           <div class="card" id="Asr">
             <h2>Asr</h2>
             <p class="adhan" id="adhanAsr">--</p>
             <p class="solat" id="solatAsr">--</p>
           </div>
-
           <div class="card" id="Maghrib">
             <h2>Maghrib</h2>
             <p class="adhan" id="adhanMaghrib">--</p>
             <p class="solat" id="solatMaghrib">--</p>
           </div>
-
           <div class="card" id="Isha">
             <h2>Isha</h2>
             <p class="adhan" id="adhanIsha">--</p>
@@ -84,14 +79,39 @@
       </div>
     </main>
 
+    <!-- AUDIO: Adhan -->
+    <audio id="adhanAudio" src="/AUDIO/adhan.mp3" preload="auto"></audio>
+
     <!-- SCRIPTS -->
     <script src="/JS/prayer.js"></script>
     <script src="/JS/qibla.js"></script>
     <script>
-     if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/JS/service-worker.js");
-}
-</script>
+      // UNLOCK AUDIO ON FIRST CLICK/TOUCH
+      const adhanAudio = document.getElementById("adhanAudio");
+      let audioUnlocked = false;
+
+      function unlockAudio() {
+        if (audioUnlocked) return;
+        adhanAudio
+          .play()
+          .then(() => {
+            adhanAudio.pause();
+            adhanAudio.currentTime = 0;
+            audioUnlocked = true;
+            document.removeEventListener("click", unlockAudio);
+            document.removeEventListener("touchstart", unlockAudio);
+            console.log("Adhan audio unlocked");
+          })
+          .catch(() => {});
+      }
+
+      document.addEventListener("click", unlockAudio);
+      document.addEventListener("touchstart", unlockAudio);
+
+      // REGISTER SERVICE WORKER
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/JS/service-worker.js");
+      }
     </script>
   </body>
 </html>
