@@ -89,7 +89,6 @@
       // UNLOCK AUDIO ON FIRST CLICK/TOUCH
       const adhanAudio = document.getElementById("adhanAudio");
       let audioUnlocked = false;
-
       function unlockAudio() {
         if (audioUnlocked) return;
         adhanAudio
@@ -104,7 +103,6 @@
           })
           .catch(() => {});
       }
-
       document.addEventListener("click", unlockAudio);
       document.addEventListener("touchstart", unlockAudio);
 

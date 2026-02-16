@@ -93,6 +93,8 @@ body {
   height: 2px;
   background: #1f2d28;
 }
+
+/* Responsive Hamburger Menu */
 @media (max-width: 900px) {
   .menu-icon {
     display: flex;

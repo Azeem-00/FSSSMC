@@ -21,10 +21,10 @@ if ("geolocation" in navigator) {
     (pos) => {
       userLat = pos.coords.latitude;
       userLon = pos.coords.longitude;
-      // Recalculate Qibla angle relative to north
       updateNeedle();
     },
     () => {
+      // fallback to Nigeria
       userLat = 9.082;
       userLon = 8.6753;
       updateNeedle();
@@ -34,17 +34,13 @@ if ("geolocation" in navigator) {
 }
 
 // -----------------
-// Handle phone rotation
+// Handle device rotation
 // -----------------
 function enableCompass() {
   if ("DeviceOrientationEvent" in window) {
     if (typeof DeviceOrientationEvent.requestPermission === "function") {
       const btn = document.createElement("button");
       btn.innerText = "Enable Compass";
-      btn.style.position = "absolute";
-      btn.style.top = "10px";
-      btn.style.left = "50%";
-      btn.style.transform = "translateX(-50%)";
       document.body.appendChild(btn);
 
       btn.addEventListener("click", () => {
@@ -74,16 +70,15 @@ function handleOrientation(event) {
   let heading;
 
   if (event.webkitCompassHeading !== undefined) {
-    heading = event.webkitCompassHeading; // iOS
+    heading = event.webkitCompassHeading;
   } else if (event.absolute && event.alpha !== null) {
-    heading = 360 - event.alpha; // Android
+    heading = 360 - event.alpha;
   } else if (event.alpha !== null) {
-    heading = 360 - event.alpha; // fallback
+    heading = 360 - event.alpha;
   } else {
     return;
   }
 
-  // Update needle
   currentAngle = (calculateQibla(userLat, userLon) - heading + 360) % 360;
 }
 
@@ -102,7 +97,7 @@ function calculateQibla(lat, lon) {
 }
 
 // -----------------
-// Smooth animation
+// Animation
 // -----------------
 function updateNeedle() {
   requestAnimationFrame(draw);
@@ -111,7 +106,7 @@ function updateNeedle() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  //// outer circle
+  // Outer circle
   ctx.beginPath();
   ctx.arc(center, center, radius, 0, Math.PI * 2);
   ctx.fillStyle = "#f8fffb";
@@ -120,7 +115,7 @@ function draw() {
   ctx.strokeStyle = "#3cb371";
   ctx.stroke();
 
-  //// tick marks
+  // Tick marks
   for (let i = 0; i < 360; i += 15) {
     const angle = (i * Math.PI) / 180;
     const len = i % 45 === 0 ? 10 : 5;
@@ -136,7 +131,7 @@ function draw() {
     ctx.stroke();
   }
 
-  //// Direction letters
+  // Direction letters
   ctx.fillStyle = "#2e8b57";
   ctx.font = "bold 14px Arial";
   ctx.textAlign = "center";
@@ -147,7 +142,7 @@ function draw() {
   ctx.fillText("E", center + d, center);
   ctx.fillText("W", center - d, center);
 
-  //// rotate needle smoothly
+  // Smooth rotation
   let diff = currentAngle - displayAngle;
   if (diff > 180) diff -= 360;
   if (diff < -180) diff += 360;
@@ -157,7 +152,7 @@ function draw() {
   ctx.translate(center, center);
   ctx.rotate((displayAngle * Math.PI) / 180);
 
-  //// needle
+  // Needle
   ctx.beginPath();
   ctx.moveTo(0, -radius + 25);
   ctx.lineTo(6, 0);
@@ -166,7 +161,7 @@ function draw() {
   ctx.fillStyle = "#3cb371";
   ctx.fill();
 
-  //// Kaaba marker
+  // Kaaba marker
   ctx.fillStyle = "#111";
   ctx.fillRect(-6, -radius + 10, 12, 12);
   ctx.fillStyle = "#ffd700";
@@ -174,13 +169,13 @@ function draw() {
 
   ctx.restore();
 
-  //// center dot
+  // Center dot
   ctx.beginPath();
   ctx.arc(center, center, 4, 0, Math.PI * 2);
   ctx.fillStyle = "#2e8b57";
   ctx.fill();
 
-  //// text
+  // Text
   qiblaText.innerText = `Qibla: ${displayAngle.toFixed(1)}°`;
 
   requestAnimationFrame(draw);
