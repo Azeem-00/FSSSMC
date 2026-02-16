@@ -10,6 +10,7 @@ const KAABA_LON = 39.8262;
 
 let userLat = 0;
 let userLon = 0;
+let deviceHeading = 0;
 let currentAngle = 0;
 let displayAngle = 0;
 
@@ -21,76 +22,86 @@ if ("geolocation" in navigator) {
     (pos) => {
       userLat = pos.coords.latitude;
       userLon = pos.coords.longitude;
-      currentAngle = calculateQibla(userLat, userLon); // set initial
     },
     () => {
-      // fallback to Nigeria
       userLat = 9.082;
       userLon = 8.6753;
-      currentAngle = calculateQibla(userLat, userLon);
     },
     { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 },
   );
 }
 
 // -----------------
-// Enable compass on mobile
+// Sensor-based heading
 // -----------------
-function enableCompass() {
+async function startSensors() {
+  try {
+    // Magnetometer + Accelerometer
+    const mag = new Magnetometer({ frequency: 60 });
+    const accel = new Accelerometer({ frequency: 60 });
+
+    let magData = null,
+      accelData = null;
+
+    mag.addEventListener("reading", () => {
+      magData = { x: mag.x, y: mag.y, z: mag.z };
+      updateSensorHeading();
+    });
+    accel.addEventListener("reading", () => {
+      accelData = { x: accel.x, y: accel.y, z: accel.z };
+      updateSensorHeading();
+    });
+
+    mag.start();
+    accel.start();
+  } catch (err) {
+    // Fallback: DeviceOrientation
+    enableOrientationFallback();
+  }
+}
+
+function updateSensorHeading() {
+  // Must have both readings
+  if (!window.accelData || !window.magData) return;
+
+  const { x: mx, y: my } = window.magData;
+  const heading = Math.atan2(my, mx) * (180 / Math.PI);
+  deviceHeading = (heading + 360) % 360;
+}
+
+function enableOrientationFallback() {
   if ("DeviceOrientationEvent" in window) {
     if (typeof DeviceOrientationEvent.requestPermission === "function") {
-      // iOS 13+
       const btn = document.createElement("button");
       btn.innerText = "Enable Compass";
       btn.style.fontSize = "18px";
       btn.style.padding = "10px 20px";
-      btn.style.marginTop = "20px";
       document.body.appendChild(btn);
 
       btn.addEventListener("click", () => {
         DeviceOrientationEvent.requestPermission().then((perm) => {
           if (perm === "granted") {
-            window.addEventListener(
-              "deviceorientation",
-              handleOrientation,
-              true,
-            );
+            window.addEventListener("deviceorientation", (e) => {
+              if (e.alpha !== null) {
+                deviceHeading = (360 - e.alpha) % 360;
+              }
+            });
             btn.remove();
-          } else {
-            alert("Compass permission denied.");
           }
         });
       });
     } else {
-      // Android & others
-      window.addEventListener(
-        "deviceorientationabsolute",
-        handleOrientation,
-        true,
-      );
-      window.addEventListener("deviceorientation", handleOrientation, true);
+      window.addEventListener("deviceorientationabsolute", (e) => {
+        if (e.alpha !== null) {
+          deviceHeading = (360 - e.alpha) % 360;
+        }
+      });
+      window.addEventListener("deviceorientation", (e) => {
+        if (e.alpha !== null) {
+          deviceHeading = (360 - e.alpha) % 360;
+        }
+      });
     }
-  } else {
-    alert("Device orientation not supported.");
-  }
-}
-
-// -----------------
-// Handle orientation
-// -----------------
-function handleOrientation(event) {
-  let heading = null;
-
-  if (event.webkitCompassHeading !== undefined) {
-    heading = event.webkitCompassHeading; // iOS
-  } else if (event.absolute && event.alpha !== null) {
-    heading = 360 - event.alpha; // Android absolute
-  } else if (event.alpha !== null) {
-    heading = 360 - event.alpha; // fallback
-  }
-
-  if (heading !== null) {
-    currentAngle = (calculateQibla(userLat, userLon) - heading + 360) % 360;
   }
 }
 
@@ -109,21 +120,21 @@ function calculateQibla(lat, lon) {
 }
 
 // -----------------
-// Draw compass
+// Draw
 // -----------------
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Outer circle
+  // Circle
   ctx.beginPath();
   ctx.arc(center, center, radius, 0, Math.PI * 2);
-  ctx.fillStyle = "#f8fffb";
+  ctx.fillStyle = "#fff";
   ctx.fill();
   ctx.lineWidth = 4;
-  ctx.strokeStyle = "#3cb371";
+  ctx.strokeStyle = "#228B22";
   ctx.stroke();
 
-  // Tick marks
+  // Ticks
   for (let i = 0; i < 360; i += 15) {
     const angle = (i * Math.PI) / 180;
     const len = i % 45 === 0 ? 10 : 5;
@@ -135,12 +146,12 @@ function draw() {
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.lineWidth = i % 45 === 0 ? 2 : 1;
-    ctx.strokeStyle = "#3cb371";
+    ctx.strokeStyle = "#228B22";
     ctx.stroke();
   }
 
-  // Direction letters
-  ctx.fillStyle = "#2e8b57";
+  // Compass letters
+  ctx.fillStyle = "#006400";
   ctx.font = "bold 14px Arial";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -150,41 +161,38 @@ function draw() {
   ctx.fillText("E", center + d, center);
   ctx.fillText("W", center - d, center);
 
-  // Smooth rotation
-  let diff = currentAngle - displayAngle;
+  // Qibla angle relative to device
+  const qiblaAngle = calculateQibla(userLat, userLon);
+  const target = (qiblaAngle - deviceHeading + 360) % 360;
+
+  // Smooth animation
+  let diff = target - displayAngle;
   if (diff > 180) diff -= 360;
   if (diff < -180) diff += 360;
   displayAngle += diff * 0.1;
 
-  // Needle
+  // Draw needle
   ctx.save();
   ctx.translate(center, center);
   ctx.rotate((displayAngle * Math.PI) / 180);
 
   ctx.beginPath();
   ctx.moveTo(0, -radius + 25);
-  ctx.lineTo(6, 0);
-  ctx.lineTo(-6, 0);
+  ctx.lineTo(7, 0);
+  ctx.lineTo(-7, 0);
   ctx.closePath();
-  ctx.fillStyle = "#3cb371";
+  ctx.fillStyle = "#228B22";
   ctx.fill();
 
   // Kaaba marker
-  ctx.fillStyle = "#111";
-  ctx.fillRect(-6, -radius + 10, 12, 12);
-  ctx.fillStyle = "#ffd700";
-  ctx.fillRect(-6, -radius + 10, 12, 3);
+  ctx.fillStyle = "#000";
+  ctx.fillRect(-7, -radius + 10, 14, 14);
+  ctx.fillStyle = "#FFD700";
+  ctx.fillRect(-7, -radius + 10, 14, 4);
 
   ctx.restore();
 
-  // Center dot
-  ctx.beginPath();
-  ctx.arc(center, center, 4, 0, Math.PI * 2);
-  ctx.fillStyle = "#2e8b57";
-  ctx.fill();
-
-  // Text
-  qiblaText.innerText = `Qibla: ${displayAngle.toFixed(1)}°`;
+  qiblaText.innerText = `Heading: ${deviceHeading.toFixed(1)}°   Qibla: ${qiblaAngle.toFixed(1)}°`;
 
   requestAnimationFrame(draw);
 }
@@ -192,5 +200,5 @@ function draw() {
 // -----------------
 // Start
 // -----------------
-enableCompass();
+startSensors();
 draw();
