@@ -14,33 +14,37 @@ let currentAngle = 0;
 let displayAngle = 0;
 
 // -----------------
-// Get location continuously
+// Get location
 // -----------------
 if ("geolocation" in navigator) {
   navigator.geolocation.watchPosition(
     (pos) => {
       userLat = pos.coords.latitude;
       userLon = pos.coords.longitude;
-      updateNeedle();
+      currentAngle = calculateQibla(userLat, userLon); // set initial
     },
     () => {
       // fallback to Nigeria
       userLat = 9.082;
       userLon = 8.6753;
-      updateNeedle();
+      currentAngle = calculateQibla(userLat, userLon);
     },
     { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 },
   );
 }
 
 // -----------------
-// Handle device rotation
+// Enable compass on mobile
 // -----------------
 function enableCompass() {
   if ("DeviceOrientationEvent" in window) {
     if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      // iOS 13+
       const btn = document.createElement("button");
       btn.innerText = "Enable Compass";
+      btn.style.fontSize = "18px";
+      btn.style.padding = "10px 20px";
+      btn.style.marginTop = "20px";
       document.body.appendChild(btn);
 
       btn.addEventListener("click", () => {
@@ -52,10 +56,13 @@ function enableCompass() {
               true,
             );
             btn.remove();
+          } else {
+            alert("Compass permission denied.");
           }
         });
       });
     } else {
+      // Android & others
       window.addEventListener(
         "deviceorientationabsolute",
         handleOrientation,
@@ -63,27 +70,32 @@ function enableCompass() {
       );
       window.addEventListener("deviceorientation", handleOrientation, true);
     }
-  }
-}
-
-function handleOrientation(event) {
-  let heading;
-
-  if (event.webkitCompassHeading !== undefined) {
-    heading = event.webkitCompassHeading;
-  } else if (event.absolute && event.alpha !== null) {
-    heading = 360 - event.alpha;
-  } else if (event.alpha !== null) {
-    heading = 360 - event.alpha;
   } else {
-    return;
+    alert("Device orientation not supported.");
   }
-
-  currentAngle = (calculateQibla(userLat, userLon) - heading + 360) % 360;
 }
 
 // -----------------
-// Calculate Qibla angle
+// Handle orientation
+// -----------------
+function handleOrientation(event) {
+  let heading = null;
+
+  if (event.webkitCompassHeading !== undefined) {
+    heading = event.webkitCompassHeading; // iOS
+  } else if (event.absolute && event.alpha !== null) {
+    heading = 360 - event.alpha; // Android absolute
+  } else if (event.alpha !== null) {
+    heading = 360 - event.alpha; // fallback
+  }
+
+  if (heading !== null) {
+    currentAngle = (calculateQibla(userLat, userLon) - heading + 360) % 360;
+  }
+}
+
+// -----------------
+// Calculate Qibla
 // -----------------
 function calculateQibla(lat, lon) {
   const φK = (KAABA_LAT * Math.PI) / 180;
@@ -97,12 +109,8 @@ function calculateQibla(lat, lon) {
 }
 
 // -----------------
-// Animation
+// Draw compass
 // -----------------
-function updateNeedle() {
-  requestAnimationFrame(draw);
-}
-
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -148,11 +156,11 @@ function draw() {
   if (diff < -180) diff += 360;
   displayAngle += diff * 0.1;
 
+  // Needle
   ctx.save();
   ctx.translate(center, center);
   ctx.rotate((displayAngle * Math.PI) / 180);
 
-  // Needle
   ctx.beginPath();
   ctx.moveTo(0, -radius + 25);
   ctx.lineTo(6, 0);
