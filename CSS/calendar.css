@@ -226,16 +226,39 @@ body {
   background: #f9f9f9;
 }
 
-/* MOBILE */
-
-@media (max-width: 768px) {
-  .calendar-header div,
-  .day {
-    font-size: 0.8rem;
-    padding: 6px;
+/* =========================
+   RESPONSIVE CALENDAR ONLY
+   (Do not change existing styles)
+========================= */
+@media (max-width: 900px) {
+  .calendar-container {
+    padding: 10px;
+    margin-top: 90px; /* adjust if header overlaps */
   }
 
-  .day {
-    min-height: 60px;
+  .calendar-header div,
+  .calendar-grid .day,
+  .calendar-grid .empty {
+    font-size: 0.8rem; /* shrink text */
+    min-height: 50px; /* shrink cells */
+    padding: 6px 2px; /* adjust padding */
+  }
+
+  /* Force 7-column layout to stay on smaller screens */
+  .calendar-header,
+  .calendar-grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+}
+
+@media (max-width: 500px) {
+  .calendar-header div,
+  .calendar-grid .day,
+  .calendar-grid .empty {
+    font-size: 0.65rem;
+    min-height: 40px;
+    padding: 4px 2px;
   }
 }
