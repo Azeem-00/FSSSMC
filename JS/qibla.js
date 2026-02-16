@@ -12,45 +12,51 @@ const KAABA_LON = 39.8262;
 // State
 let userLat = 0;
 let userLon = 0;
-let currentAngle = 0;
-let targetAngle = 0;
+let currentAngle = 0; // needle rotation
+let displayAngle = 0; // smooth animation
 let dynamicMode = false;
 
 // -----------------
-// Get user location
+// Watch user location
 // -----------------
-navigator.geolocation.getCurrentPosition(
-  (pos) => {
-    userLat = pos.coords.latitude;
-    userLon = pos.coords.longitude;
-
-    targetAngle = calculateQibla(userLat, userLon);
-    enableCompassIfAvailable();
-    startDrawing();
-  },
-  () => {
-    // fallback (Nigeria)
-    userLat = 9.082;
-    userLon = 8.6753;
-
-    targetAngle = calculateQibla(userLat, userLon);
-    startDrawing();
-  },
-);
+if ("geolocation" in navigator) {
+  navigator.geolocation.watchPosition(
+    (pos) => {
+      userLat = pos.coords.latitude;
+      userLon = pos.coords.longitude;
+      // recalc Qibla angle relative to north
+      updateTargetAngle();
+    },
+    () => {
+      // fallback (Nigeria)
+      userLat = 9.082;
+      userLon = 8.6753;
+      updateTargetAngle();
+    },
+    { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 },
+  );
+} else {
+  // fallback if no geolocation
+  userLat = 9.082;
+  userLon = 8.6753;
+  updateTargetAngle();
+}
 
 // -----------------
-// Enable phone compass
+// Enable compass on phone
 // -----------------
 function enableCompassIfAvailable() {
   if ("DeviceOrientationEvent" in window) {
     dynamicMode = true;
 
-    // iOS 13+ requires permission
     if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      // iOS 13+ requires user gesture
       const btn = document.createElement("button");
       btn.innerText = "Enable Compass";
       btn.style.position = "absolute";
       btn.style.top = "10px";
+      btn.style.left = "50%";
+      btn.style.transform = "translateX(-50%)";
       document.body.appendChild(btn);
 
       btn.addEventListener("click", () => {
@@ -65,7 +71,7 @@ function enableCompassIfAvailable() {
         });
       });
     } else {
-      // Android and other devices
+      // Android and others
       window.addEventListener("deviceorientationabsolute", handleOrientation, {
         capture: true,
         passive: true,
@@ -84,23 +90,28 @@ function enableCompassIfAvailable() {
 function handleOrientation(event) {
   let heading;
 
-  // iOS
   if (event.webkitCompassHeading !== undefined) {
-    heading = event.webkitCompassHeading; // 0 = north
-  }
-  // Android & others with absolute orientation
-  else if (event.absolute && event.alpha !== null) {
-    heading = 360 - event.alpha;
-  }
-  // Fallback: ignore if no heading
-  else if (event.alpha !== null) {
-    heading = 360 - event.alpha; // may be approximate
+    heading = event.webkitCompassHeading; // iOS
+  } else if (event.absolute && event.alpha !== null) {
+    heading = 360 - event.alpha; // Android & absolute
+  } else if (event.alpha !== null) {
+    heading = 360 - event.alpha; // fallback
   } else {
     return;
   }
 
-  // Update target angle (Qibla relative to north)
-  targetAngle = (calculateQibla(userLat, userLon) - heading + 360) % 360;
+  // Update needle angle relative to north
+  currentAngle = (calculateQibla(userLat, userLon) - heading + 360) % 360;
+}
+
+// -----------------
+// Update target angle from current position
+// -----------------
+function updateTargetAngle() {
+  // If compass not available, needle points directly
+  if (!dynamicMode) {
+    currentAngle = calculateQibla(userLat, userLon);
+  }
 }
 
 // -----------------
@@ -183,18 +194,13 @@ function startDrawing() {
     ctx.save();
     ctx.translate(center, center);
 
-    let angleRad;
-    if (dynamicMode) {
-      let diff = targetAngle - currentAngle;
-      if (diff > 180) diff -= 360;
-      if (diff < -180) diff += 360;
-      currentAngle += diff * 0.1;
-      angleRad = (currentAngle * Math.PI) / 180;
-    } else {
-      angleRad = (targetAngle * Math.PI) / 180;
-    }
+    // Smooth rotation
+    let diff = currentAngle - displayAngle;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    displayAngle += diff * 0.1;
 
-    ctx.rotate(angleRad);
+    ctx.rotate((displayAngle * Math.PI) / 180);
 
     //// needle
     ctx.beginPath();
@@ -220,10 +226,16 @@ function startDrawing() {
     ctx.fill();
 
     //// text
-    qiblaText.innerText = `Qibla: ${targetAngle.toFixed(1)}° ${getDirection(targetAngle)}`;
+    qiblaText.innerText = `Qibla: ${displayAngle.toFixed(1)}° ${getDirection(displayAngle)}`;
 
     requestAnimationFrame(draw);
   }
 
   draw();
 }
+
+// -----------------
+// Initialize
+// -----------------
+enableCompassIfAvailable();
+startDrawing();
