@@ -11,7 +11,6 @@ const KAABA_LON = 39.8262;
 let userLat = 0;
 let userLon = 0;
 let deviceHeading = 0;
-let currentAngle = 0;
 let displayAngle = 0;
 
 // -----------------
@@ -32,43 +31,8 @@ if ("geolocation" in navigator) {
 }
 
 // -----------------
-// Sensor-based heading
+// Device orientation fallback
 // -----------------
-async function startSensors() {
-  try {
-    // Magnetometer + Accelerometer
-    const mag = new Magnetometer({ frequency: 60 });
-    const accel = new Accelerometer({ frequency: 60 });
-
-    let magData = null,
-      accelData = null;
-
-    mag.addEventListener("reading", () => {
-      magData = { x: mag.x, y: mag.y, z: mag.z };
-      updateSensorHeading();
-    });
-    accel.addEventListener("reading", () => {
-      accelData = { x: accel.x, y: accel.y, z: accel.z };
-      updateSensorHeading();
-    });
-
-    mag.start();
-    accel.start();
-  } catch (err) {
-    // Fallback: DeviceOrientation
-    enableOrientationFallback();
-  }
-}
-
-function updateSensorHeading() {
-  // Must have both readings
-  if (!window.accelData || !window.magData) return;
-
-  const { x: mx, y: my } = window.magData;
-  const heading = Math.atan2(my, mx) * (180 / Math.PI);
-  deviceHeading = (heading + 360) % 360;
-}
-
 function enableOrientationFallback() {
   if ("DeviceOrientationEvent" in window) {
     if (typeof DeviceOrientationEvent.requestPermission === "function") {
@@ -76,6 +40,7 @@ function enableOrientationFallback() {
       btn.innerText = "Enable Compass";
       btn.style.fontSize = "18px";
       btn.style.padding = "10px 20px";
+      btn.style.marginTop = "20px";
       document.body.appendChild(btn);
 
       btn.addEventListener("click", () => {
@@ -92,18 +57,16 @@ function enableOrientationFallback() {
       });
     } else {
       window.addEventListener("deviceorientationabsolute", (e) => {
-        if (e.alpha !== null) {
-          deviceHeading = (360 - e.alpha) % 360;
-        }
+        if (e.alpha !== null) deviceHeading = (360 - e.alpha) % 360;
       });
       window.addEventListener("deviceorientation", (e) => {
-        if (e.alpha !== null) {
-          deviceHeading = (360 - e.alpha) % 360;
-        }
+        if (e.alpha !== null) deviceHeading = (360 - e.alpha) % 360;
       });
     }
   }
 }
+
+enableOrientationFallback();
 
 // -----------------
 // Calculate Qibla
@@ -120,7 +83,7 @@ function calculateQibla(lat, lon) {
 }
 
 // -----------------
-// Draw
+// Draw compass
 // -----------------
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -171,7 +134,7 @@ function draw() {
   if (diff < -180) diff += 360;
   displayAngle += diff * 0.1;
 
-  // Draw needle
+  // Needle
   ctx.save();
   ctx.translate(center, center);
   ctx.rotate((displayAngle * Math.PI) / 180);
@@ -192,7 +155,8 @@ function draw() {
 
   ctx.restore();
 
-  qiblaText.innerText = `Heading: ${deviceHeading.toFixed(1)}°   Qibla: ${qiblaAngle.toFixed(1)}°`;
+  // Styled Qibla text only
+  qiblaText.innerText = `Qibla: ${qiblaAngle.toFixed(1)}°`;
 
   requestAnimationFrame(draw);
 }
@@ -200,5 +164,4 @@ function draw() {
 // -----------------
 // Start
 // -----------------
-startSensors();
 draw();
