@@ -34,16 +34,150 @@
     </header>
     <!-- EVENTS -->
     <main id="events" class="section">
-      <h2>Upcoming Islamic Events</h2>
-      <div id="event-cards" class="event-cards"></div>
+      <h2>Masjid Programs & Events</h2>
+
+      <div class="accordion">
+        <!-- Weekly -->
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span>Weekly Programs</span>
+            <svg class="arrow" viewBox="0 0 24 24">
+              <path d="M7 10l5 5 5-5" />
+            </svg>
+          </button>
+
+          <div class="accordion-content">
+            <div class="program">
+              Jumu’ah Prayer <small>Friday • 1:30 PM</small>
+            </div>
+            <div class="program">
+              Tafsir Class <small>Sunday • 4:00 PM</small>
+            </div>
+            <div class="program">
+              Youth Islamic Class <small>Saturday • 10:00 AM</small>
+            </div>
+            <div class="program">
+              Qur'an Memorization (Hifz) <small>Daily • After Asr</small>
+            </div>
+            <div class="program">
+              Sisters Circle <small>Wednesday • 5:00 PM</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly -->
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span>Monthly Programs</span>
+            <svg class="arrow" viewBox="0 0 24 24">
+              <path d="M7 10l5 5 5-5" />
+            </svg>
+          </button>
+
+          <div class="accordion-content">
+            <div class="program">Community Clean-Up</div>
+            <div class="program">Family Islamic Lecture</div>
+            <div class="program">Tahajjud Night</div>
+            <div class="program">Youth Mentorship Session</div>
+          </div>
+        </div>
+
+        <!-- Quarterly -->
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span>Quarterly Programs</span>
+            <svg class="arrow" viewBox="0 0 24 24">
+              <path d="M7 10l5 5 5-5" />
+            </svg>
+          </button>
+
+          <div class="accordion-content">
+            <div class="program">Islamic Seminar</div>
+            <div class="program">Community Outreach</div>
+            <div class="program">Charity Distribution</div>
+            <div class="program">Leadership Workshop</div>
+          </div>
+        </div>
+
+        <!-- Annual -->
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span>Annual Programs</span>
+            <svg class="arrow" viewBox="0 0 24 24">
+              <path d="M7 10l5 5 5-5" />
+            </svg>
+          </button>
+
+          <div class="accordion-content">
+            <div class="program">Ramadan Tafsir & Iftar</div>
+            <div class="program">Eid al-Fitr Prayer</div>
+            <div class="program">Eid al-Adha Prayer</div>
+            <div class="program">Islamic Conference</div>
+            <div class="program">Dhul Hijjah Lectures</div>
+          </div>
+        </div>
+      </div>
+    </div>
     </main>
     <footer class="site-footer">
-      <p>© 2026 FSSSMC Mosque. All Rights Reserved.</p>
+      <div class="footer-container">
+        <div class="footer-section footer-brand">
+          <img src="IMAGE/FSSMC ICON.jpeg" alt="Mosque Logo" />
+          <h3>FSSSMC Mosque</h3>
+          <p>There Are Blessing In Serving Allah.</p>
+        </div>
+
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="prayer.html">Prayer Times</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="learn.html">Learn</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <p>Email: mosque@email.com</p>
+          <p>Phone: +234 xxx xxx xxxx</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        © 2026 FSSSMC Mosque • All Rights Reserved
+      </div>
     </footer>
     <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/JS/service-worker.js");
       }
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const items = document.querySelectorAll(".accordion-item");
+
+        items.forEach((item) => {
+          const header = item.querySelector(".accordion-header");
+          const content = item.querySelector(".accordion-content");
+
+          header.addEventListener("click", () => {
+            const isOpen = item.classList.contains("active");
+
+            /* close all */
+            items.forEach((i) => {
+              i.classList.remove("active");
+              i.querySelector(".accordion-content").style.maxHeight = null;
+            });
+
+            /* open current */
+            if (!isOpen) {
+              item.classList.add("active");
+              content.style.maxHeight = content.scrollHeight + "px";
+            }
+          });
+        });
+      });
     </script>
   </body>
 </html>

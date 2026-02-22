@@ -1,344 +1,221 @@
-// =====================================
-// FSSMC MOSQUE PRAYER SYSTEM (FULL)
-// Fast, Cached, Reliable Version
-// =====================================
+/* =========================================================
+   FSSSMC MOSQUE PRAYER SYSTEM — FINAL VERSION WITH NOTIFICATIONS
+========================================================= */
 
-// =====================================
-// CONFIG
-// =====================================
+const API_BASE = "https://api.aladhan.com/v1";
+const METHOD = 1;
+const SCHOOL = 0;
 
-// Default mosque fallback location
-const MOSQUE_LAT = 8.4896;
-const MOSQUE_LON = 4.5421;
-
-// Prayer API
-const API_URL =
-  "https://api.aladhan.com/v1/timings?latitude={lat}&longitude={lng}&method=4&school=1";
-
-// Prayers list
-const prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
-
-// Cache keys
-const CACHE_CITY = "mosque_city";
-const CACHE_LAT = "mosque_lat";
-const CACHE_LON = "mosque_lon";
-
-// Elements
 const locationEl = document.getElementById("location");
 const countdownEl = document.getElementById("countdown");
+const adhanAudio = document.getElementById("adhanAudio");
 
-// =====================================
-// GLOBAL VARIABLES
-// =====================================
+const prayerCards = {
+  Fajr: document.getElementById("Fajr"),
+  Dhuhr: document.getElementById("Dhuhr"),
+  Asr: document.getElementById("Asr"),
+  Maghrib: document.getElementById("Maghrib"),
+  Isha: document.getElementById("Isha"),
+};
 
 let prayerTimes = {};
-let countdownInterval = null;
+let currentPrayer = null;
+let adhanPlayed = false;
 
-let adhanAudio = new Audio("/AUDIO/adhan.mp3");
-adhanAudio.preload = "auto";
+/* =========================================================
+   REQUEST NOTIFICATION PERMISSION
+========================================================= */
 
-let audioUnlocked = false;
-let adhanPlayedToday = {};
-let lastResetDay = new Date().getDate();
-
-// =====================================
-// SHOW INITIAL STATE
-// =====================================
-
-locationEl.innerText = "Detecting location...";
-
-// =====================================
-// AUDIO UNLOCK (Required for browsers)
-// =====================================
-
-function unlockAudio() {
-  if (audioUnlocked) return;
-
-  adhanAudio
-    .play()
-    .then(() => {
-      adhanAudio.pause();
-      adhanAudio.currentTime = 0;
-      audioUnlocked = true;
-      document.removeEventListener("click", unlockAudio);
-      document.removeEventListener("touchstart", unlockAudio);
-    })
-    .catch(() => {});
-}
-
-document.addEventListener("click", unlockAudio);
-document.addEventListener("touchstart", unlockAudio);
-
-// =====================================
-// NOTIFICATION PERMISSION
-// =====================================
-
-if ("Notification" in window) {
+if ("Notification" in window && Notification.permission !== "granted") {
   Notification.requestPermission();
 }
 
-// =====================================
-// LOCATION HANDLING
-// =====================================
+/* =========================================================
+   LOCATION DETECTION
+========================================================= */
 
-async function getLocation() {
-  locationEl.innerText = "Detecting location...";
+async function detectLocation() {
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      loadPrayerTimes(lat, lon);
 
-  // Use cached location instantly if available
-  const cachedCity = localStorage.getItem(CACHE_CITY);
-  const cachedLat = localStorage.getItem(CACHE_LAT);
-  const cachedLon = localStorage.getItem(CACHE_LON);
-
-  if (cachedCity && cachedLat && cachedLon) {
-    locationEl.innerText = cachedCity;
-    fetchPrayerTimes(parseFloat(cachedLat), parseFloat(cachedLon));
-  }
-
-  // Update with real GPS location
-  if ("geolocation" in navigator) {
-    const timeoutPromise = new Promise(
-      (resolve) => setTimeout(resolve, 10000, null), // 10s timeout
-    );
-
-    const geoPromise = new Promise((resolve) =>
-      navigator.geolocation.getCurrentPosition(
-        (pos) => resolve(pos),
-        (err) => resolve(null),
-        { enableHighAccuracy: true, maximumAge: 0 },
-      ),
-    );
-
-    const position = await Promise.race([geoPromise, timeoutPromise]);
-
-    if (position) {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-
-      fetchPrayerTimes(lat, lon);
-
-      const cityCountry = await getCityFast(lat, lon);
-      locationEl.innerText = cityCountry;
-
-      localStorage.setItem(CACHE_CITY, cityCountry);
-      localStorage.setItem(CACHE_LAT, lat);
-      localStorage.setItem(CACHE_LON, lon);
-    } else {
-      // Fallback if GPS fails
-      locationEl.innerText = "Lagos, Nigeria";
-      fetchPrayerTimes(MOSQUE_LAT, MOSQUE_LON);
-    }
-  } else {
-    locationEl.innerText = "Lagos, Nigeria";
-    fetchPrayerTimes(MOSQUE_LAT, MOSQUE_LON);
-  }
-}
-
-// =====================================
-// FAST CITY DETECTION
-// =====================================
-
-async function getCityFast(lat, lon) {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`,
-      { headers: { "Accept-Language": "en" } },
-    );
-    const data = await res.json();
-    const addr = data.address || {};
-
-    const state =
-      addr.state ||
-      addr.region ||
-      addr.county ||
-      addr.city ||
-      addr.town ||
-      addr.village ||
-      "";
-    const country = addr.country || "";
-
-    if (state && country) return state + ", " + country;
-    if (country) return country;
-
-    return "Unknown location";
-  } catch {
-    return "Unknown location";
-  }
-}
-
-// =====================================
-// FETCH PRAYER TIMES
-// =====================================
-
-async function fetchPrayerTimes(lat, lon) {
-  try {
-    const res = await fetch(
-      API_URL.replace("{lat}", lat).replace("{lng}", lon),
-    );
-    const data = await res.json();
-
-    prayerTimes = data.data.timings;
-
-    displayTimes();
-    startCountdown();
-  } catch {
-    locationEl.innerText = "Failed to load prayer times";
-  }
-}
-
-// =====================================
-// DISPLAY PRAYER TIMES
-// =====================================
-
-function displayTimes() {
-  prayers.forEach((name) => {
-    const adhan = prayerTimes[name];
-    document.getElementById("adhan" + name).innerText = formatTime(adhan);
-    const iqamah = new Date(createDate(adhan).getTime() + 10 * 60000);
-    document.getElementById("solat" + name).innerText =
-      "Iqamah: " + formatTimeFromDate(iqamah);
-  });
-}
-
-// =====================================
-// PLAY ADHAN
-// =====================================
-
-function playAdhan(name) {
-  if (!audioUnlocked) return;
-  if (adhanPlayedToday[name]) return;
-
-  adhanPlayedToday[name] = true;
-  adhanAudio.currentTime = 0;
-  adhanAudio.play().catch(() => {});
-
-  if ("Notification" in window && Notification.permission === "granted") {
-    new Notification("Adhan Time", {
-      body: name + " prayer time",
-      icon: "/IMAGE/FSSMC ICON.jpeg",
-    });
-  }
-}
-
-// =====================================
-// COUNTDOWN SYSTEM
-// =====================================
-
-function startCountdown() {
-  if (countdownInterval) clearInterval(countdownInterval);
-
-  countdownInterval = setInterval(() => {
-    const now = new Date();
-
-    // Daily reset
-    if (now.getDate() !== lastResetDay) {
-      adhanPlayedToday = {};
-      lastResetDay = now.getDate();
-    }
-
-    let found = false;
-
-    for (let name of prayers) {
-      const adhanTime = createDate(prayerTimes[name]);
-      const iqamahTime = new Date(adhanTime.getTime() + 10 * 60000);
-
-      if (
-        now.getHours() === adhanTime.getHours() &&
-        now.getMinutes() === adhanTime.getMinutes() &&
-        now.getSeconds() === 0
-      ) {
-        playAdhan(name);
+      try {
+        const geoRes = await fetch(
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`,
+        );
+        const data = await geoRes.json();
+        const city =
+          data.city ||
+          data.locality ||
+          data.principalSubdivision ||
+          "Unknown location";
+        const country = data.countryName || "";
+        locationEl.textContent = `${city}, ${country}`;
+      } catch {
+        locationEl.textContent = "Location detected";
       }
-
-      if (now < adhanTime) {
-        updateCountdown(name + " Adhan in", adhanTime);
-        found = true;
-        break;
+    },
+    async () => {
+      try {
+        const ipRes = await fetch("https://ipapi.co/json/");
+        const data = await ipRes.json();
+        const lat = data.latitude;
+        const lon = data.longitude;
+        locationEl.textContent = `${data.city}, ${data.country_name}`;
+        loadPrayerTimes(lat, lon);
+      } catch {
+        locationEl.textContent = "Lagos, Nigeria";
+        loadPrayerTimes(6.5244, 3.3792);
       }
-
-      if (now >= adhanTime && now < iqamahTime) {
-        updateCountdown(name + " Iqamah in", iqamahTime);
-        found = true;
-        break;
-      }
-    }
-
-    if (!found) {
-      const fajr = createDate(prayerTimes["Fajr"]);
-      fajr.setDate(fajr.getDate() + 1);
-      updateCountdown("Fajr Adhan in", fajr);
-    }
-
-    updateActiveCard();
-  }, 1000);
-}
-
-// =====================================
-// UPDATE COUNTDOWN
-// =====================================
-
-function updateCountdown(label, target) {
-  const now = new Date();
-  const diff = target - now;
-  const h = Math.floor(diff / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  const s = Math.floor((diff % 60000) / 1000);
-  countdownEl.innerText = label + " " + pad(h) + ":" + pad(m) + ":" + pad(s);
-}
-
-// =====================================
-// ACTIVE CARD
-// =====================================
-
-function updateActiveCard() {
-  document
-    .querySelectorAll(".card")
-    .forEach((card) => card.classList.remove("active"));
-  const current = getCurrentPrayer();
-  if (current) document.getElementById(current).classList.add("active");
-}
-
-function getCurrentPrayer() {
-  const now = new Date();
-  let current = null;
-  prayers.forEach((name) => {
-    const time = createDate(prayerTimes[name]);
-    if (now >= time) current = name;
-  });
-  return current;
-}
-
-// =====================================
-// HELPERS
-// =====================================
-
-function createDate(timeStr) {
-  const now = new Date();
-  const parts = timeStr.split(":");
-  return new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    parseInt(parts[0]),
-    parseInt(parts[1]),
-    0,
+    },
+    { timeout: 5000, maximumAge: 600000 },
   );
 }
 
-function formatTime(timeStr) {
-  const parts = timeStr.split(":");
-  return pad(parts[0]) + ":" + pad(parts[1]);
+/* =========================================================
+   LOAD PRAYER TIMES
+========================================================= */
+
+async function loadPrayerTimes(lat, lon) {
+  const now = new Date();
+  const dateStr = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
+  const url = `${API_BASE}/timings?latitude=${lat}&longitude=${lon}&method=${METHOD}&school=${SCHOOL}&date=${dateStr}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    prayerTimes = data.data.timings;
+
+    displayTimes();
+    updateActivePrayer();
+    setInterval(updateActivePrayer, 1000);
+  } catch {
+    countdownEl.textContent = "Failed to load prayer times";
+  }
 }
 
-function formatTimeFromDate(date) {
-  return pad(date.getHours()) + ":" + pad(date.getMinutes());
+/* =========================================================
+   DISPLAY PRAYER TIMES
+========================================================= */
+
+function displayTimes() {
+  ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"].forEach(setPrayer);
 }
 
-function pad(n) {
-  return n.toString().padStart(2, "0");
+function setPrayer(name) {
+  const time = prayerTimes[name];
+  document.getElementById("adhan" + name).textContent = formatTime(time);
+  document.getElementById("solat" + name).textContent =
+    "Iqamah: " + formatTime(addMinutes(time, 10));
 }
 
-// =====================================
-// START APP
-// =====================================
+/* =========================================================
+   TIME HELPERS
+========================================================= */
 
-getLocation();
+function addMinutes(time, mins) {
+  const d = getTimeObject(time);
+  d.setMinutes(d.getMinutes() + mins);
+  return (
+    d.getHours().toString().padStart(2, "0") +
+    ":" +
+    d.getMinutes().toString().padStart(2, "0")
+  );
+}
+
+function formatTime(time) {
+  const d = getTimeObject(time);
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function getTimeObject(time) {
+  const [h, m] = time.split(":").map(Number);
+  const d = new Date();
+  d.setHours(h, m, 0, 0);
+  return d;
+}
+
+/* =========================================================
+   UPDATE ACTIVE PRAYER
+========================================================= */
+
+function updateActivePrayer() {
+  const now = new Date();
+  const order = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+
+  let active = null;
+  let next = null;
+
+  for (let name of order) {
+    const t = getTimeObject(prayerTimes[name]);
+    if (now >= t) active = name;
+    if (now < t && !next) next = name;
+  }
+
+  if (!active) active = "Isha";
+
+  highlight(active);
+  updateCountdown(next);
+  playAdhan(active);
+}
+
+/* =========================================================
+   HIGHLIGHT ACTIVE PRAYER
+========================================================= */
+
+function highlight(name) {
+  if (currentPrayer === name) return;
+  Object.values(prayerCards).forEach((c) => c.classList.remove("active"));
+  prayerCards[name].classList.add("active");
+  currentPrayer = name;
+}
+
+/* =========================================================
+   COUNTDOWN
+========================================================= */
+
+function updateCountdown(next) {
+  if (!next) return;
+  const now = new Date();
+  const nextTime = getTimeObject(prayerTimes[next]);
+  const diff = nextTime - now;
+
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+
+  countdownEl.textContent = `Next: ${next} in ${h}h ${m}m ${s}s`;
+}
+
+/* =========================================================
+   PLAY ADHAN + NOTIFICATION
+========================================================= */
+
+function playAdhan(name) {
+  const now = new Date();
+  const t = getTimeObject(prayerTimes[name]);
+
+  if (Math.abs(now - t) < 1000 && !adhanPlayed) {
+    // Play adhan audio
+    adhanAudio.play().catch(() => {});
+
+    // Show browser notification if allowed
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification(`Time for ${name} prayer`, {
+        body: "Iqamah in 10 minutes",
+        icon: "/path/to/masjid-icon.png", // optional
+      });
+    }
+
+    adhanPlayed = true;
+    setTimeout(() => (adhanPlayed = false), 60000);
+  }
+}
+
+/* =========================================================
+   START
+========================================================= */
+
+detectLocation();

@@ -1,3 +1,7 @@
+// ============================================================
+// FSSSMC Qibla Compass — Rotates on mobile, needle-only on desktop
+// ============================================================
+
 const canvas = document.getElementById("compass");
 const ctx = canvas.getContext("2d");
 const qiblaText = document.getElementById("qiblaText");
@@ -13,6 +17,8 @@ let userLon = 0;
 let deviceHeading = 0;
 let displayAngle = 0;
 
+let isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
 // -----------------
 // Get location
 // -----------------
@@ -23,6 +29,7 @@ if ("geolocation" in navigator) {
       userLon = pos.coords.longitude;
     },
     () => {
+      // fallback: center of Nigeria
       userLat = 9.082;
       userLon = 8.6753;
     },
@@ -31,14 +38,15 @@ if ("geolocation" in navigator) {
 }
 
 // -----------------
-// Device orientation fallback
+// Device orientation
 // -----------------
-function enableOrientationFallback() {
-  if ("DeviceOrientationEvent" in window) {
+function enableOrientation() {
+  if ("DeviceOrientationEvent" in window && isMobile) {
     if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      // iOS
       const btn = document.createElement("button");
       btn.innerText = "Enable Compass";
-      btn.style.fontSize = "18px";
+      btn.style.fontSize = "16px";
       btn.style.padding = "10px 20px";
       btn.style.marginTop = "20px";
       document.body.appendChild(btn);
@@ -47,15 +55,14 @@ function enableOrientationFallback() {
         DeviceOrientationEvent.requestPermission().then((perm) => {
           if (perm === "granted") {
             window.addEventListener("deviceorientation", (e) => {
-              if (e.alpha !== null) {
-                deviceHeading = (360 - e.alpha) % 360;
-              }
+              if (e.alpha !== null) deviceHeading = (360 - e.alpha) % 360;
             });
             btn.remove();
           }
         });
       });
     } else {
+      // Android / other
       window.addEventListener("deviceorientationabsolute", (e) => {
         if (e.alpha !== null) deviceHeading = (360 - e.alpha) % 360;
       });
@@ -66,10 +73,10 @@ function enableOrientationFallback() {
   }
 }
 
-enableOrientationFallback();
+enableOrientation();
 
 // -----------------
-// Calculate Qibla
+// Calculate Qibla angle
 // -----------------
 function calculateQibla(lat, lon) {
   const φK = (KAABA_LAT * Math.PI) / 180;
@@ -79,7 +86,26 @@ function calculateQibla(lat, lon) {
 
   const y = Math.sin(λK - λ);
   const x = Math.cos(φ) * Math.tan(φK) - Math.sin(φ) * Math.cos(λK - λ);
+
   return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
+}
+
+// -----------------
+// Compass direction
+// -----------------
+function getCompassDirection(angle) {
+  const directions = [
+    "North",
+    "North-East",
+    "East",
+    "South-East",
+    "South",
+    "South-West",
+    "West",
+    "North-West",
+  ];
+  const index = Math.round(angle / 45) % 8;
+  return directions[index];
 }
 
 // -----------------
@@ -88,9 +114,36 @@ function calculateQibla(lat, lon) {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  const qiblaAngle = calculateQibla(userLat, userLon);
+
+  let targetAngle;
+  if (isMobile) {
+    // Mobile: rotate entire compass dial
+    targetAngle = deviceHeading;
+  } else {
+    // Desktop: compass stays static, rotate only needle
+    targetAngle = 0;
+  }
+
+  // Smooth rotation
+  let diff = targetAngle - displayAngle;
+  if (diff > 180) diff -= 360;
+  if (diff < -180) diff += 360;
+  displayAngle += diff * 0.1;
+
+  // -----------------
+  // Draw circle
+  // -----------------
+  ctx.save();
+  ctx.translate(center, center);
+
+  if (isMobile) {
+    ctx.rotate((displayAngle * Math.PI) / 180); // rotate entire dial
+  }
+
   // Circle
   ctx.beginPath();
-  ctx.arc(center, center, radius, 0, Math.PI * 2);
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
   ctx.fillStyle = "#fff";
   ctx.fill();
   ctx.lineWidth = 4;
@@ -101,10 +154,11 @@ function draw() {
   for (let i = 0; i < 360; i += 15) {
     const angle = (i * Math.PI) / 180;
     const len = i % 45 === 0 ? 10 : 5;
-    const x1 = center + Math.cos(angle) * (radius - len);
-    const y1 = center + Math.sin(angle) * (radius - len);
-    const x2 = center + Math.cos(angle) * radius;
-    const y2 = center + Math.sin(angle) * radius;
+    const x1 = Math.cos(angle) * (radius - len);
+    const y1 = Math.sin(angle) * (radius - len);
+    const x2 = Math.cos(angle) * radius;
+    const y2 = Math.sin(angle) * radius;
+
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
@@ -119,26 +173,28 @@ function draw() {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   const d = radius - 20;
-  ctx.fillText("N", center, center - d);
-  ctx.fillText("S", center, center + d);
-  ctx.fillText("E", center + d, center);
-  ctx.fillText("W", center - d, center);
+  ctx.fillText("N", 0, -d);
+  ctx.fillText("S", 0, d);
+  ctx.fillText("E", d, 0);
+  ctx.fillText("W", -d, 0);
 
-  // Qibla angle relative to device
-  const qiblaAngle = calculateQibla(userLat, userLon);
-  const target = (qiblaAngle - deviceHeading + 360) % 360;
+  ctx.restore();
 
-  // Smooth animation
-  let diff = target - displayAngle;
-  if (diff > 180) diff -= 360;
-  if (diff < -180) diff += 360;
-  displayAngle += diff * 0.1;
-
-  // Needle
+  // -----------------
+  // Draw needle
+  // -----------------
   ctx.save();
   ctx.translate(center, center);
-  ctx.rotate((displayAngle * Math.PI) / 180);
 
+  // On mobile, needle points relative to rotated dial
+  // On desktop, needle points relative to static compass
+  const needleAngle = isMobile
+    ? ((qiblaAngle - deviceHeading + 360) % 360) * (Math.PI / 180)
+    : (qiblaAngle * Math.PI) / 180;
+
+  ctx.rotate(needleAngle);
+
+  // Needle
   ctx.beginPath();
   ctx.moveTo(0, -radius + 25);
   ctx.lineTo(7, 0);
@@ -155,8 +211,11 @@ function draw() {
 
   ctx.restore();
 
-  // Styled Qibla text only
-  qiblaText.innerText = `Qibla: ${qiblaAngle.toFixed(1)}°`;
+  // -----------------
+  // Display Qibla text
+  // -----------------
+  const direction = getCompassDirection(qiblaAngle);
+  qiblaText.innerText = `Qibla: ${qiblaAngle.toFixed(1)}° (${direction})`;
 
   requestAnimationFrame(draw);
 }

@@ -3,8 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FSSMC Mosque</title>
-    <link rel="stylesheet" href="/CSS/contact.css" />
+    <title>FSSMC Mosque - Contact</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="CSS/contact.css" />
   </head>
   <body>
     <!-- HEADER -->
@@ -33,16 +37,111 @@
       </div>
     </header>
 
-    <!-- CONTACT -->
-    <main id="contact" class="section">
-      <h2>Contact Us</h2>
-      <p>Email: info@fssmcmosque.com</p>
-      <p>Phone: +234 800 123 4567</p>
-      <p>Location: Lagos, Nigeria</p>
-    </main>
-    <footer>
-      <p>© 2026 FSSMC Mosque</p>
+    <br /><br /><br />
+
+    <!-- CONTACT SECTION -->
+    <section class="contact-section">
+      <!-- LEFT PANEL: Contact Info -->
+      <div class="contact-info">
+        <h2>Get in Touch</h2>
+        <p>
+          Have questions or want to volunteer? Contact us through any method
+          below. We are here for you and our community.
+        </p>
+
+        <div class="info-cards">
+          <div class="info-card">
+            <img
+              src="https://img.icons8.com/ios-filled/50/3cb371/new-post.png"
+              alt="Email Icon"
+            />
+            <div>
+              <h3>Email</h3>
+              <a href="mailto:info@fssmcmosque.com">info@fssmcmosque.com</a>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <img
+              src="https://img.icons8.com/ios-filled/50/3cb371/phone.png"
+              alt="Phone Icon"
+            />
+            <div>
+              <h3>Phone</h3>
+              <a href="tel:+2348001234567">+234 800 123 4567</a>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <img
+              src="https://img.icons8.com/ios-filled/50/3cb371/marker.png"
+              alt="Location Icon"
+            />
+            <div>
+              <h3>Address</h3>
+              <span
+                ><b
+                  >27 Ola Kazeem Street, Graceland Estate Isheri Lagos State,
+                  Nigeria</b
+                >
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Map -->
+      <div class="contact-map">
+        <div class="map-image-container" id="mapImageContainer">
+          <img src="IMAGE/fsssmc.jpeg" alt="Mosque Map" id="mapImage" />
+          <div class="map-overlay">Click to Get Direction To The Mosque</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-section footer-brand">
+          <img src="IMAGE/FSSMC ICON.jpeg" alt="Mosque Logo" />
+          <h3>FSSSMC Mosque</h3>
+          <p>There Are Blessing In Serving Allah.</p>
+        </div>
+
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="prayer.html">Prayer Times</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="learn.html">Learn</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <p>Email: mosque@email.com</p>
+          <p>Phone: +234 xxx xxx xxxx</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        © 2026 FSSSMC Mosque • All Rights Reserved
+      </div>
     </footer>
+
+    <!-- SCRIPT -->
+    <script>
+      const mapImageContainer = document.getElementById("mapImageContainer");
+
+      mapImageContainer.addEventListener("click", () => {
+        const mosqueLat = 6.585437385861939;
+        const mosqueLng = 3.275420300290349;
+
+        const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=My+Location&destination=${mosqueLat},${mosqueLng}&travelmode=driving`;
+        window.open(mapsUrl, "_blank");
+      });
+    </script>
     <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/JS/service-worker.js");

@@ -3,16 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FSSSMC Mosque</title>
-    <link rel="stylesheet" href="CSS/learn.css" />
-    <link rel="manifest" href="manifest.json" />
+    <title>Learn - FSSMC Mosque</title>
+    <link rel="stylesheet" href="/CSS/learn.css" />
   </head>
   <body>
+    <!-- HEADER -->
     <header class="site-header">
       <div class="header-inner">
         <div class="logo">
           <img src="IMAGE/FSSMC ICON.jpeg" alt="FSSMC Mosque Logo" />
-          <span>FSSSMC Mosque</span>
+          <span>FSSMC Mosque</span>
         </div>
         <input type="checkbox" id="menu-toggle" />
         <label for="menu-toggle" class="menu-icon">
@@ -32,11 +32,201 @@
         </nav>
       </div>
     </header>
-    <!-- QURAN -->
-    <main id="quran" class="section">
-      <h2>Read Quran</h2>
-      <a class="btn" href="https://quran.com" target="_blank">Open Quran</a>
+
+    <!-- MAIN CONTENT -->
+    <main id="learn" class="section">
+      <div class="learn-intro">
+        <h1>Welcome to FSSMC Learning Page</h1>
+        <p>
+          Our mission is to guide members of our community on the path of
+          knowledge and spirituality. At FSSMC, we provide structured learning
+          for all ages—children, teens, and adults—covering the Quran, Hadith,
+          prayer, ablutions, daily duas, and Islamic classes tailored to help
+          you grow in understanding and practice.
+        </p>
+      </div>
+
+      <!-- TAB NAVIGATION -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="quran">Quran</button>
+        <button class="tab-btn" data-tab="hadith">Hadith</button>
+        <button class="tab-btn" data-tab="prayer">Prayer & Ablution</button>
+        <button class="tab-btn" data-tab="duas">Daily Duas</button>
+        <button class="tab-btn" data-tab="classes">Islamic Classes</button>
+      </div>
+
+      <!-- TAB CONTENT -->
+      <div class="tab-content">
+        <!-- Quran -->
+        <div id="quran" class="tab active">
+          <h2>Read and Understand the Quran</h2>
+          <p>
+            Our Quran learning program is designed for beginners and advanced
+            learners alike. Students will learn proper Arabic recitation with
+            Tajweed, memorize selected Surahs, and explore the meaning and
+            context of the verses to deepen their understanding.
+          </p>
+          <ul>
+            <li>Start with short Surahs and common prayers</li>
+            <li>Recitation with Tajweed guidance</li>
+            <li>Translation and understanding of verses</li>
+          </ul>
+          <a href="https://quran.com/" target="_blank" class="learn-btn"
+            >Read The Quran</a
+          >
+        </div>
+
+        <!-- Hadith -->
+        <div id="hadith" class="tab">
+          <h2>Understand Hadith</h2>
+          <p>
+            Hadith are the sayings and traditions of Prophet Muhammad ﷺ that
+            guide daily life. Our classes help learners understand authentic
+            Hadith collections, the context behind them, and practical
+            applications for personal development and moral conduct.
+          </p>
+          <ul>
+            <li>Start with concise, authentic Hadith</li>
+            <li>Learn the meaning and application in daily life</li>
+            <li>Interactive discussions to encourage understanding</li>
+          </ul>
+          <a href="https://sunnah.com/" target="_blank" class="learn-btn"
+            >Learn Hadith</a
+          >
+        </div>
+
+        <!-- Prayer & Ablution -->
+        <div id="prayer" class="tab">
+          <h2>Prayer & Ablution</h2>
+          <p>
+            Step-by-step instructions on performing Salah and Wudu. Our
+            experienced instructors demonstrate each action, ensuring that
+            students understand the movements, recitations, and etiquette of
+            prayer.
+          </p>
+          <ul>
+            <li>Correct method of ablution (Wudu)</li>
+            <li>Step-by-step Salah instructions</li>
+            <li>Learning Sunnah prayers and their benefits</li>
+          </ul>
+          <a
+            href="https://www.alim.org/quran-and-science/salah-wudu-guide/"
+            target="_blank"
+            class="learn-btn"
+            >Learn To Pray Salah & Perform Wudu</a
+          >
+        </div>
+
+        <!-- Daily Duas -->
+        <div id="duas" class="tab">
+          <h2>Daily Duas</h2>
+          <p>
+            Our Dua sessions introduce learners to important daily
+            supplications, explaining their meanings and proper times. Students
+            will learn prayers for morning, evening, before meals, for
+            protection, and during challenges, helping integrate spirituality
+            into daily life.
+          </p>
+          <ul>
+            <li>Morning and evening supplications</li>
+            <li>Duas before and after meals</li>
+            <li>Protection, guidance, and gratitude duas</li>
+          </ul>
+          <a
+            href="https://www.alim.org/duas/daily-duas/"
+            target="_blank"
+            class="learn-btn"
+            >Read Duas</a
+          >
+        </div>
+
+        <!-- Islamic Classes -->
+        <div id="classes" class="tab">
+          <h2>Islamic Classes for All Ages</h2>
+          <p>
+            Our Islamic classes are designed to nurture faith, knowledge, and
+            practice for children, teens, and adults. Each age group has
+            structured learning paths, ensuring lessons are age-appropriate,
+            engaging, and spiritually enriching.
+          </p>
+
+          <h3>Children (Ages 5-12)</h3>
+          <p>
+            Classes for young children focus on foundational Islamic knowledge,
+            teaching them basic Quranic recitation, simple duas, manners, and
+            stories of the Prophets. Learning is interactive, with activities,
+            quizzes, and recitation practice to make it fun and memorable.
+          </p>
+
+          <h3>Teens (Ages 13-18)</h3>
+          <p>
+            Teen classes emphasize deeper understanding of Quran and Hadith,
+            Islamic history, morals, and ethics. Teens engage in discussions,
+            workshops, and guided reflections to strengthen their faith and
+            develop skills to navigate daily life as practicing Muslims.
+          </p>
+
+          <h3>Adults</h3>
+          <p>
+            Adult classes provide comprehensive Islamic knowledge, including
+            tafsir (Quranic interpretation), fiqh (practical jurisprudence), and
+            advanced Hadith studies. Sessions also cover personal development,
+            family guidance, and community responsibilities, empowering adults
+            to lead and serve with understanding.
+          </p>
+
+          <a href="contact.html" class="learn-btn"
+            >For More And Detailed Information</a
+          >
+        </div>
+      </div>
     </main>
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-section footer-brand">
+          <img src="IMAGE/FSSMC ICON.jpeg" alt="Mosque Logo" />
+          <h3>FSSSMC Mosque</h3>
+          <p>There Are Blessing In Serving Allah.</p>
+        </div>
+
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="prayer.html">Prayer Times</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="learn.html">Learn</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <p>Email: mosque@email.com</p>
+          <p>Phone: +234 xxx xxx xxxx</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        © 2026 FSSSMC Mosque • All Rights Reserved
+      </div>
+    </footer>
+
+    <!-- SCRIPT FOR TABS -->
+    <script>
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const tabs = document.querySelectorAll(".tab");
+
+      tabButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          tabButtons.forEach((b) => b.classList.remove("active"));
+          tabs.forEach((t) => t.classList.remove("active"));
+
+          btn.classList.add("active");
+          document.getElementById(btn.dataset.tab).classList.add("active");
+        });
+      });
+    </script>
     <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/JS/service-worker.js");
