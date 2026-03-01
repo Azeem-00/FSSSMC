@@ -369,3 +369,19 @@ body {
   pointer-events: none;
   user-select: none;
 }
+.disclaimer {
+  background-color: #fff8e1;
+  border-left: 4px solid lightgreen;
+  padding: 12px 16px;
+  margin: 20px 0;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.disclaimer span {
+  font-weight: 600;
+  color: green;
+  margin-right: 4px;
+}
