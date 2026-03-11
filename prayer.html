@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FSSSMC Mosque</title>
     <link rel="stylesheet" href="CSS/prayer.css" />
-    <link rel="manifest" href="manifest.json" />
+   
   </head>
   <body>
     <!-- HEADER -->
@@ -134,11 +134,6 @@
       }
       document.addEventListener("click", unlockAudio);
       document.addEventListener("touchstart", unlockAudio);
-
-      // REGISTER SERVICE WORKER
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/JS/service-worker.js");
-      }
     </script>
   </body>
 </html>

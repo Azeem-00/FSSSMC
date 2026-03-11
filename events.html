@@ -268,11 +268,6 @@
       </div>
     </footer>
     <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/JS/service-worker.js");
-      }
-    </script>
-    <script>
       document.querySelectorAll(".accordion-header").forEach((header) => {
         header.addEventListener("click", () => {
           const item = header.parentElement;

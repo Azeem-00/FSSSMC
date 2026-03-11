@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FSSSMC Mosque</title>
     <link rel="stylesheet" href="CSS/home.css" />
-    <link rel="manifest" href="manifest.json" />
   </head>
   <body>
     <header class="site-header">
@@ -44,8 +43,9 @@
         <br />
         <h2>THERE ARE BLESSINGS IN SERVING ALLAH</h2>
         <br />
-        <button class="btn-primary">
-          Use the navigation menu above for quick access to all key pages
+        <button class="btn-primary scroll-btn">
+          Use the navigation menu above for quick access
+          <span class="arrow">↑</span>
         </button>
       </div>
     </main>
@@ -80,9 +80,12 @@
       </div>
     </footer>
     <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/JS/service-worker.js");
-      }
+      document.querySelector(".scroll-btn").addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
     </script>
   </body>
 </html>
