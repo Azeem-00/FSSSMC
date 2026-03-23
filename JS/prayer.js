@@ -22,7 +22,6 @@ let timer = null;
 /* =========================================================
    REQUEST NOTIFICATION PERMISSION
 ========================================================= */
-
 if ("Notification" in window && Notification.permission !== "granted") {
   Notification.requestPermission();
 }
@@ -30,19 +29,21 @@ if ("Notification" in window && Notification.permission !== "granted") {
 /* =========================================================
    START SYSTEM
 ========================================================= */
-
 init();
 
 async function init() {
+  locationEl.textContent = "Detecting location... (allow GPS)";
+
   const coords = await getLocation();
+
   await loadPrayerTimes(coords.lat, coords.lon);
+
   startClock();
 }
 
 /* =========================================================
-   GET GPS LOCATION (HIGH ACCURACY)
+   GET LOCATION (GPS FIRST → FALLBACK → MANUAL)
 ========================================================= */
-
 function getLocation() {
   return new Promise((resolve) => {
     if (!navigator.geolocation) {
@@ -50,7 +51,7 @@ function getLocation() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      async (pos) => {
+      (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
@@ -59,13 +60,19 @@ function getLocation() {
         resolve({ lat, lon });
       },
 
-      async () => {
+      async (err) => {
+        console.warn("GPS failed:", err.message);
+
+        alert(
+          "Location access denied or failed.\nUsing approximate location.\nFor best accuracy, enable GPS.",
+        );
+
         resolve(useIPLocation());
       },
 
       {
         enableHighAccuracy: true,
-        timeout: 20000,
+        timeout: 15000,
         maximumAge: 0,
       },
     );
@@ -73,34 +80,62 @@ function getLocation() {
 }
 
 /* =========================================================
-   FALLBACK IP LOCATION
+   FALLBACK: IP LOCATION (MORE ACCURATE)
 ========================================================= */
-
 async function useIPLocation() {
   try {
-    const res = await fetch("https://ipapi.co/json/");
+    const res = await fetch("https://ipwho.is/");
     const data = await res.json();
 
-    locationEl.textContent = `${data.city}, ${data.country_name}`;
+    if (data.success) {
+      locationEl.textContent = `${data.city}, ${data.country}`;
 
-    return {
-      lat: data.latitude,
-      lon: data.longitude,
-    };
+      return {
+        lat: data.latitude,
+        lon: data.longitude,
+      };
+    } else {
+      throw new Error("IP lookup failed");
+    }
   } catch {
-    locationEl.textContent = "Lagos, Nigeria";
+    locationEl.textContent = "Location not found";
 
-    return {
-      lat: 6.5244,
-      lon: 3.3792,
-    };
+    return askManualLocation();
   }
 }
 
 /* =========================================================
-   GET CITY NAME FROM GPS
+   MANUAL LOCATION (FINAL FALLBACK)
 ========================================================= */
+async function askManualLocation() {
+  const city = prompt("Enter your city (e.g. London):");
+  const country = prompt("Enter your country (e.g. UK):");
 
+  if (!city || !country) {
+    locationEl.textContent = "Using default (Lagos, Nigeria)";
+    return { lat: 6.5244, lon: 3.3792 };
+  }
+
+  locationEl.textContent = `${city}, ${country}`;
+
+  // Use Aladhan city API instead
+  const url = `${API_BASE}/timingsByCity?city=${city}&country=${country}&method=${METHOD}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  prayerTimes = data.data.timings;
+
+  displayTimes();
+
+  startClock();
+
+  return null; // prevents lat/lon flow
+}
+
+/* =========================================================
+   REVERSE GEOCODE (GPS → CITY NAME)
+========================================================= */
 async function updateLocationName(lat, lon) {
   try {
     const res = await fetch(
@@ -124,10 +159,11 @@ async function updateLocationName(lat, lon) {
 }
 
 /* =========================================================
-   LOAD PRAYER TIMES
+   LOAD PRAYER TIMES (LAT/LON)
 ========================================================= */
-
 async function loadPrayerTimes(lat, lon) {
+  if (!lat || !lon) return;
+
   const today = new Date();
 
   const dateStr = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
@@ -145,7 +181,6 @@ async function loadPrayerTimes(lat, lon) {
 /* =========================================================
    DISPLAY TIMES
 ========================================================= */
-
 function displayTimes() {
   const prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
@@ -160,9 +195,8 @@ function displayTimes() {
 }
 
 /* =========================================================
-   MAIN CLOCK LOOP
+   CLOCK LOOP
 ========================================================= */
-
 function startClock() {
   if (timer) clearInterval(timer);
 
@@ -174,8 +208,9 @@ function startClock() {
 /* =========================================================
    UPDATE PRAYER STATUS
 ========================================================= */
-
 function updatePrayer() {
+  if (!prayerTimes.Fajr) return;
+
   const now = new Date();
 
   const prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
@@ -191,8 +226,6 @@ function updatePrayer() {
     if (now < time && !next) next = name;
   }
 
-  /* after Isha → next is Fajr tomorrow */
-
   if (!next) next = "Fajr";
 
   highlightPrayer(active);
@@ -203,7 +236,6 @@ function updatePrayer() {
 /* =========================================================
    HIGHLIGHT CURRENT PRAYER
 ========================================================= */
-
 function highlightPrayer(name) {
   if (!name || currentPrayer === name) return;
 
@@ -215,9 +247,8 @@ function highlightPrayer(name) {
 }
 
 /* =========================================================
-   COUNTDOWN TO NEXT PRAYER
+   COUNTDOWN
 ========================================================= */
-
 function updateCountdown(name) {
   let nextTime = getTimeObject(prayerTimes[name]);
 
@@ -235,9 +266,8 @@ function updateCountdown(name) {
 }
 
 /* =========================================================
-   PLAY ADHAN + NOTIFICATION
+   ADHAN + NOTIFICATION
 ========================================================= */
-
 function playAdhan(name) {
   if (!name) return;
 
@@ -262,7 +292,6 @@ function playAdhan(name) {
 /* =========================================================
    TIME HELPERS
 ========================================================= */
-
 function getTimeObject(time) {
   const [h, m] = time.split(":");
 
